@@ -3,13 +3,31 @@ import LogInModal from '../../modals/LogIn'
 import { Button, Img, List, Text } from "components";
 import { Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
+import { FaBell } from "react-icons/fa";
+import { FaUserAlt } from "react-icons/fa";
+import { IoChatbubble } from "react-icons/io5";
+import axios from "axios";
+
 
 const LandingPageHeader = (props) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const userId = useSelector(state => state.auth.userId)
   const [socket, setSocket] = useState(null)
   const [notifications ,setNotifications] =useState([])
+  const [unreadCount, setUnreadCount] = useState(0)
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
 
+  
+  const toggleDropdown = async () => {
+    setDropdownOpen(!isDropdownOpen);
+    setUnreadCount(0)
+    try {
+      const response = await axios.post(`http://127.0.0.1:8009/api/mark-all-unread-notifications-as-read/${userId}/`)
+      console.log(response.data)
+    } catch (error) {
+      console.error('error while marking notifications read',error)
+    }
+  };
 
   useEffect(() => {
     if (userId) {
@@ -34,7 +52,8 @@ const LandingPageHeader = (props) => {
             const data = JSON.parse(e.data);
             const message = data.message_content;
             console.log(data, 'return message user');
-            setNotifications((prevNotifications) => [...prevNotifications, data.message]);
+            setUnreadCount(prevUnreadCount => prevUnreadCount + 1);
+            setNotifications((prevNotifications) => [data, ...prevNotifications]);
             console.log('onmessage worked:', data)
         };
     
@@ -49,12 +68,21 @@ const LandingPageHeader = (props) => {
     }
   }, [socket])
 
+  useEffect(() => {
+    const fetchNotifaications = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8009/api/notificationmessages/${userId}`)
+        console.log(response.data)
+        setNotifications(response.data.messages)
+        setUnreadCount(response.data.unread_count)
+      } catch (error) {
+        console.error('error',error)
+      }
+    }
+    fetchNotifaications();
+  }, [])
 
-    const [isDropdownOpen, setDropdownOpen] = useState(true);
-  
-    const toggleDropdown = () => {
-      setDropdownOpen(!isDropdownOpen);
-    };
+
 
   const openLoginModal = () => {
     setIsLoginModalOpen(true);
@@ -126,7 +154,7 @@ const LandingPageHeader = (props) => {
               Blog
             </Text>
           </div>
-          <div className="flex flex-row gap-10 h-[42px] md:h-auto sm:hidden items-center justify-start w-[228px]">
+          <div className="flex flex-row gap-4 h-[42px] md:h-auto sm:hidden items-center justify-start w-[228px]">
           {/* <button class="relative bg-blue-700 hover:bg-blue-800 duration-300 py-2 px-4 text-blue-100 rounded">Secondary
          <span class="absolute bg-gray-600 text-gray-100 px-2 py-1 text-xs font-bold rounded-full -top-3 -right-3">99+</span>
       </button> */}
@@ -144,20 +172,27 @@ const LandingPageHeader = (props) => {
                 Scheduled Visits
               </Link>
             </Button>
-           
+            <Button 
+              onClick={() => setIsLoginModalOpen(true)}
+              className="bg-gray-900 cursor-pointer font-manrope px-3 font-semibold py-3 rounded-full text-base text-center text-white-A700 w-full">
+              <IoChatbubble />
+            </Button>
             <Button
               onClick={toggleDropdown}
-              className="relative bg-gray-900 cursor-pointer font-manrope px-1 font-semibold py-2.5 rounded-[10px] text-base text-center text-white-A700 w-full"
+              className="relative bg-gray-900 cursor-pointer font-manrope font-semibold p-3 rounded-full text-base text-center text-white-A700 w-full"
             >
-              Notifications
-              <span className="absolute bg-red-500 text-white-A700 px-2 py-1 text-xs font-bold rounded-full -top-3 -right-3">{notifications.length}</span>
-
+              <FaBell className=""/>
+              {unreadCount > 0 && (
+                  <span className="absolute bg-red-500 text-white-A700 px-1.5 py-0.5 text-xs font-bold rounded-full -top-2 -right-2">
+                      {unreadCount}
+                  </span>
+              )}                
                 {isDropdownOpen && (
                 <div className="absolute bg-white-A700 max-h-[80vh] overflow-y-auto right-0 mt-2 bg-white rounded-md shadow-lg overflow-hidden z-20" style={{ width: '20rem' }}>
                   <div className="py-2">
                     {notifications.map((notification, index) => (
                       <div key={index} className="flex bg-white-A700 text-gray-900 items-center px-4 py-3 border-b hover:bg-gray-100 -mx-2">
-                        <span>{notification}</span>
+                        <span>{notification.message}</span>
                       </div>
                     ))}
                   </div>
@@ -166,14 +201,11 @@ const LandingPageHeader = (props) => {
                   </Link>
                 </div>
             )}
-          </Button>
-
-         
-             
+          </Button>    
             <Button 
             onClick={() => setIsLoginModalOpen(true)}
-            className="bg-gray-900 cursor-pointer font-manrope px-2 font-semibold py-2.5 rounded-[10px] text-base text-center text-white-A700 w-full">
-              LogIn
+            className="bg-gray-900 cursor-pointer font-manrope px-3 font-semibold py-3 rounded-full text-base text-center text-white-A700 w-full">
+            <FaUserAlt />
             </Button>
           </div>
         </div>

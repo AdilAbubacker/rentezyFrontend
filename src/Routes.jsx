@@ -5,6 +5,10 @@ import NotFound from "pages/NotFound";
 import UserChat from "pages/UserChat/UserChat";
 import TenantVisitListings from "pages/TenantVisitListings/TenantVisitListings";
 import PropertyDetail from "pages/PropertyDetail/PropertyDetail";
+import UserProperties from "layouts/UserProperties/UserProperties"
+import AllBookings from "pages/AllBookings/AllBookings";
+import MyApartments from "pages/MyApartments/MyApartments";
+import RentDetails from "pages/RentDetails/RentDetails";
 const License = React.lazy(() => import("pages/License"));
 const PrivacyPolicy = React.lazy(() => import("pages/PrivacyPolicy"));
 const FAQ = React.lazy(() => import("pages/FAQ"));
@@ -40,6 +44,11 @@ const ProjectRoutes = () => {
           <Route path="/blogdetails" element={<BlogDetails />} />
           <Route path="/error" element={<Error />} />
           <Route path="/scheduled-visits" element={<TenantVisitListings />} />
+          <Route path="/my-properties" element={<UserProperties/>}>
+            <Route path="" element={<MyApartments />} />
+            <Route path=":rent_id" element={<RentDetails />} />
+            <Route path="all-bookings" element={<AllBookings />} />
+          </Route>
           <Route path="/faq" element={<FAQ />} />
           <Route path="/privacypolicy" element={<PrivacyPolicy />} />
           <Route path="/license" element={<License />} />

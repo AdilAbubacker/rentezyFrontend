@@ -32,10 +32,9 @@ function UserChat() {
 
             socket.onmessage = (e) => {
                 const data = JSON.parse(e.data);
-                const message = data.message_content;
-                console.log(data, 'return message user');
+                console.log('onmessage worked:',data);
                 setMessages((prevMessages) => [...prevMessages, data]);
-                console.log('onmessage worked')
+                console.log()
             };
         
             socket.onclose = (e) => {
@@ -53,10 +52,8 @@ function UserChat() {
     useEffect(() => {
         const loadMessages = async () => {
             try {
-                console.log(userId,'kkkkkkkkkk')
                 const response = await axios.get(`http://127.0.0.1:8006/chat/chatmessages/${userId}/${ownerId}/`)
-                console.log(userId,'hhhhhhhhhhhh')
-
+                console.log('messages loaded:', response.data)
                 setMessages(response.data)
             } catch (error) {
                 console.log('error retrieving messages', error)

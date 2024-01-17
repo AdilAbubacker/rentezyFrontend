@@ -81,9 +81,6 @@ function BookNowModal(props) {
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={['DatePicker', 'DatePicker']}>
                   <DatePicker
-                  // orientation="landscape"
-                    // views={['year', 'month', 'day']}
-                    // label="Controlled picker"
                     value={moveInDate}
                     onChange={(newValue) => setMoveInDate(newValue)}
                   />
