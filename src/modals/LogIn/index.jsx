@@ -153,8 +153,9 @@ const LogInModal = (props) => {
                 Don’t have an account?
               </Text>
               <Text
-                className="text-gray-900 text-xl tracking-[-0.40px] w-auto"
+                className="text-gray-900 text-xl tracking-[-0.40px] w-auto cursor-pointer"
                 size="txtManropeSemiBold20Gray900"
+                onClick={props.onToggleCreateAccountModal}
               >
                 Create Account
               </Text>

@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { default as ModalProvider } from "react-modal";
 
 import { Button, CheckBox, Img, Input, Line, Text } from "components";
 
 const CreateAccountModal = (props) => {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState(initialState)
   return (
     <ModalProvider
       appElement={document.getElementById("root")}
@@ -34,10 +38,11 @@ const CreateAccountModal = (props) => {
                   <div className="flex flex-1 flex-col gap-5 items-start justify-start w-full">
                     <Input
                       name="textfieldlarge"
-                      placeholder="user / email address"
+                      placeholder="username"
                       className="font-semibold p-0 placeholder:text-gray-600 sm:pr-5 text-gray-600 text-left text-lg w-full"
                       wrapClassName="bg-white-A700 border border-bluegray-100 border-solid flex pl-4 pr-[35px] py-[17px] rounded-[10px] w-full"
-                      type="email"
+                      type="name"
+                      onChange={(value) => setName(value)}
                       prefix={
                         <Img
                           className="mt-auto mb-px h-6 mr-3.5"
@@ -52,6 +57,7 @@ const CreateAccountModal = (props) => {
                       className="font-semibold p-0 placeholder:text-gray-600 text-gray-600 text-left text-lg w-full"
                       wrapClassName="bg-white-A700 border border-bluegray-100 border-solid flex px-4 py-[17px] rounded-[10px] w-full"
                       type="password"
+                      onChange={(value) => setPassword(value)}
                       prefix={
                         <Img
                           className="mt-auto mb-px h-6 mr-3.5"
@@ -71,10 +77,11 @@ const CreateAccountModal = (props) => {
                   <div className="flex flex-1 flex-col gap-5 items-start justify-start w-full">
                     <Input
                       name="textfieldlarge_Two"
-                      placeholder="user / email address"
+                      placeholder="email address"
                       className="font-semibold p-0 placeholder:text-gray-600 sm:pr-5 text-gray-600 text-left text-lg w-full"
                       wrapClassName="bg-white-A700 border border-bluegray-100 border-solid flex pl-4 pr-[35px] py-[17px] rounded-[10px] w-full"
                       type="email"
+                      onChange={(value) => setEmail(value)}
                       prefix={
                         <Img
                           className="mt-auto mb-px h-6 mr-3.5"
@@ -85,10 +92,11 @@ const CreateAccountModal = (props) => {
                     ></Input>
                     <Input
                       name="textfieldlarge_Three"
-                      placeholder="Password"
+                      placeholder="Confirm Password"
                       className="font-semibold p-0 placeholder:text-gray-600 text-gray-600 text-left text-lg w-full"
                       wrapClassName="bg-white-A700 border border-bluegray-100 border-solid flex px-4 py-[17px] rounded-[10px] w-full"
                       type="password"
+                      onChange={(value) => setConfirmPassword(value)}
                       prefix={
                         <Img
                           className="mt-auto mb-px h-6 mr-3.5"
@@ -145,8 +153,9 @@ const CreateAccountModal = (props) => {
                 Have an account?
               </Text>
               <Text
-                className="text-gray-900 text-xl tracking-[-0.40px] w-auto"
+                className="text-gray-900 text-xl tracking-[-0.40px] w-auto cursor-pointer"
                 size="txtManropeSemiBold20Gray900"
+                onClick={props.onToggleLoginModal}
               >
                 Log in
               </Text>

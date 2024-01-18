@@ -70,8 +70,8 @@ function RentDetails() {
 
             <div className="flex flex-row gap-6 items-start justify-start w-full">
                 <Img
-                className="h-[180px] md:h-auto object-cover rounded-[10px] w-[180px]"
-                src={myApartment.start_date}
+                className="h-[180px] md:h-auto object-cover w-[210px]"
+                src={myApartment.image}
                 alt="rectangle5599"
                 />
                 <div className="flex flex-col gap-[3px] items-start justify-start w-1/3  h-full">
@@ -79,7 +79,7 @@ function RentDetails() {
                     className="text-gray-900 text-xl tracking-[-0.40px] w-auto"
                     size="txtManropeSemiBold20Gray900"
                     >
-                    {myApartment.start_date}      
+                    {myApartment.property_name}      
                     </Text>
                 <div className="flex flex-row gap-3.5 items-start justify-start w-full">
                     
@@ -91,11 +91,11 @@ function RentDetails() {
                     </Text>
                 </div>
                 <div className="flex flex-row gap-2.5 items-center justify-start w-full">
-                    <Img
+                    {/* <Img
                     className="h-5 w-5"
                     src="images/img_mail_gray_600.svg"
                     alt="mail"
-                    />
+                    /> */}
                     <Text
                     className="text-base text-gray-600 w-auto"
                     size="txtManropeMedium16"
@@ -105,11 +105,11 @@ function RentDetails() {
                     </Text>
                 </div>
                 <div className="flex flex-row gap-2.5 items-center justify-start w-full">
-                    <Img
+                    {/* <Img
                     className="h-5 w-5"
                     src="images/img_call.svg"
                     alt="call"
-                    />
+                    /> */}
                     <Text
                     className="text-base text-gray-600 w-auto"
                     size="txtManropeMedium16"
@@ -154,10 +154,10 @@ function RentDetails() {
             {monthlyPayments.map((monthlyPayment, index) => (
           <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-            {getMonthName(monthlyPayment.payment_date)} {new Date(monthlyPayment.payment_date).getFullYear()}
+            {getMonthName(monthlyPayment.due_date)} {new Date(monthlyPayment.due_date).getFullYear()}
             </th>
             <th scope="row" className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-              {monthlyPayment.payment_date}
+            {monthlyPayment.due_date}
             </th>
             <td className="px-4 py-4">
             {monthlyPayment.amount}
@@ -167,7 +167,7 @@ function RentDetails() {
             </td>
 
             <td className="px-4 py-4">
-              {monthlyPayment.payment_date}
+            {monthlyPayment.paid_on}
             </td>
             <td className="px-4 py-4 text-right">
                 {monthlyPayment.is_paid ? (

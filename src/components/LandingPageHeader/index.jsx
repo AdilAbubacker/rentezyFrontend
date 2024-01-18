@@ -7,10 +7,12 @@ import { FaBell } from "react-icons/fa";
 import { FaUserAlt } from "react-icons/fa";
 import { IoChatbubble } from "react-icons/io5";
 import axios from "axios";
+import CreateAccountModal from "modals/CreateAccount";
 
 
 const LandingPageHeader = (props) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isCreateAccountModalOpen, setIsCreateAccountModalOpen] = useState(false);
   const userId = useSelector(state => state.auth.userId)
   const [socket, setSocket] = useState(null)
   const [notifications ,setNotifications] =useState([])
@@ -84,8 +86,22 @@ const LandingPageHeader = (props) => {
 
 
 
+  const handleToggleCreateAccountModal = () => {
+    setIsLoginModalOpen(false);
+    setIsCreateAccountModalOpen(true);
+  };
+
+  const handleToggleLoginModal = () => {
+    setIsCreateAccountModalOpen(false);
+    setIsLoginModalOpen(true);
+  };
+
   const openLoginModal = () => {
     setIsLoginModalOpen(true);
+  };
+
+  const closeCreateAccountModal = () => {
+    setIsCreateAccountModalOpen(false);
   };
 
   const closeLoginModal = () => {
@@ -212,7 +228,11 @@ const LandingPageHeader = (props) => {
       </header>
       
        {/* Login Modal */}
-       <LogInModal isOpen={isLoginModalOpen} onRequestClose={closeLoginModal} />
+       <LogInModal isOpen={isLoginModalOpen} onRequestClose={closeLoginModal} 
+        onToggleCreateAccountModal={handleToggleCreateAccountModal}
+        />
+       <CreateAccountModal isOpen={isCreateAccountModalOpen} onToggleLoginModal={handleToggleLoginModal} 
+       onRequestClose={closeCreateAccountModal} /> 
     </>
   );
 };
