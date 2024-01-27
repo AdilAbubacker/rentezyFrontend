@@ -1,69 +1,85 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-
+import { useNavigate, useParams } from 'react-router-dom';
+import { Button, Img, Input, Line, List, Text } from 'components';
+import { formatRelativeTime } from '../../utils/TimeUtils'
 
 function UserChat() {
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [socket, setSocket] = useState(null)
-
+    const [chattedUsers, setChattedUser] = useState([])
     const userId = useSelector(state => state.auth.userId)
     const { ownerId } = useParams() 
-    // const ownerId = 2 
+    const navigate = useNavigate()
+    const [selectedChatterId, setSelectedChatterId] = useState(ownerId);
     
     useEffect(() => {
-        console.log(userId)
-        const roomName = `${userId}_${userId}`;
-        console.log(roomName)
-        const chatSocket = new WebSocket(
-            `ws://127.0.0.1:8006/ws/chat/${roomName}/`
+      console.log(userId)
+      const roomName = `${userId}_${ownerId}`;
+      console.log(roomName)
+      const chatSocket = new WebSocket(
+        `ws://127.0.0.1:8006/ws/chat/${roomName}/`
         );
         setSocket(chatSocket);
-    }, [userId])
-
-
+      }, [userId, ownerId])
+      
+      
     useEffect(() => {
-        if (socket) {
-            socket.onopen = () => {
-                console.log('websocket connetion opened')
-            };
-
-            socket.onmessage = (e) => {
-                const data = JSON.parse(e.data);
-                console.log('onmessage worked:',data);
-                setMessages((prevMessages) => [...prevMessages, data]);
-                console.log()
-            };
+      if (socket) {
+        socket.onopen = () => {
+          console.log('websocket connetion opened')
+        };
         
-            socket.onclose = (e) => {
-                console.error('Chat socket closed unexpectedly');
+        socket.onmessage = (e) => {
+          const data = JSON.parse(e.data);
+              console.log('onmessage worked:',data);
+              setMessages((prevMessages) => [...prevMessages, data]);
+              console.log()
             };
-
-        return () => {
-            // Cleanup WebSocket connection when component unmounts
-            socket.close();
-         };
-        }
-    }, [socket])
-
-
-    useEffect(() => {
+            
+            socket.onclose = (e) => {
+              console.error('Chat socket closed unexpectedly');
+            };
+            
+            return () => {
+              // Cleanup WebSocket connection when component unmounts
+              socket.close();
+            };
+          }
+        }, [socket])
+      
+      
+      useEffect(() => {
         const loadMessages = async () => {
-            try {
-                const response = await axios.get(`http://127.0.0.1:8006/chat/chatmessages/${userId}/${ownerId}/`)
-                console.log('messages loaded:', response.data)
-                setMessages(response.data)
-            } catch (error) {
-                console.log('error retrieving messages', error)
-            }
+          try {
+            const response = await axios.get(`http://127.0.0.1:8006/chat/chatmessages/${userId}/${ownerId}/`)
+            console.log('messages loaded:', response.data)
+            setMessages(response.data)
+          } catch (error) {
+            console.log('error retrieving messages', error)
+          }
         }
         loadMessages();
-    }, [userId])
+      }, [userId, ownerId])
 
+      useEffect(() => {
+        const fetchUsersChattedWith = async () => {
+          try {
+            console.log('userid:',userId)
+            const response = await axios.get(`http://127.0.0.1:8006/chat/users_chatted_with/${userId}`)
+            console.log('chatted users loaded:',response.data)
+            setChattedUser(response.data)
+          } catch (error) {
+            console.log('error retrieving messages', error)
+          }
+        }
+        fetchUsersChattedWith();
+      }, [ownerId])
+          
 
-    const handleSendMessage = async () => {
+      const handleSendMessage = async () => {
         try {
             const newMessage = {
                 sender: userId,
@@ -85,548 +101,225 @@ function UserChat() {
 
         setMessageInput('');
     };
+
+    
     
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-         {/* <ChatHeader name={name} image={img} /> */}
-            {/* {userId} {doctorId} */}
-            <div className="flex-grow overflow-y-auto px-4 py-8" >
-                {messages.map((message, index) => (
-                        <div
-                            key={index}
-                            className={`flex flex-col mb-4 ${
-                                message.sender == userId ? 'items-end' : 'items-start'
-                            }`}
-                        >
-                            <div
-                                className={`rounded-lg p-2 max-w-xs ${
-                                    message.sender == userId
-                                        ? 'bg-blue-500 text-white-A700 rounded-2xl p-3'
-                                        : 'bg-white-A700 text-gray-800 rounded-2xl p-3'
-                                }`}
-                            >
-                                {message.message_content}
-                            </div>
-                            <div className="text-xs text-gray-400 mt-1 ml-2">
-                                {/* {formatRelativeTime(message.timestamp)} */}
-                                </div>
-                        </div>
-                    ))
-                }
+  <div>
+    <div class="flex h-screen antialiased font-manrope text-gray-800 ">
+      <div class="flex flex-row h-full w-full overflow-y-hidden">
+        <div class="flex flex-col py-8 pl-6 pr-1 w-72 bg-white ">
+          <div class="flex flex-row items-center justify-center h-12 w-full">
+            <div
+              class="flex items-center justify-center rounded-2xl text-indigo-700 bg-indigo-100 h-10 w-10"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-2 font-extrabold font-manrope text-2xl">RentEzy Chat</div>
+        </div>
+       
+        <div class="flex flex-col mt-8">
+          <div class="flex flex-row items-center justify-between text-xs">
+            <span class="font-bold">Active Conversations</span>
+            <span
+              class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">4</span>
+          </div>
+          <div class="flex flex-col space-y-1 mt-4 -mx-2 h-[28rem] overflow-y-auto">
+
+          {chattedUsers.map((chattedUser, index) => (
+            <button 
+            className={`flex flex-row items-center rounded-xl p-2 ${
+              selectedChatterId === chattedUser.id ? 'bg-gray-100' : 'hover:bg-gray-100'
+            }`}            
+            onClick={() => {
+              setSelectedChatterId(chattedUser.id);
+              navigate(`/chat/${chattedUser.id}`);
+            }}
+            >
+            <div class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">
+                     {chattedUser.username.charAt(0).toUpperCase()}
+             </div>
+              <div class="ml-2 text-sm font-semibold">{chattedUser.username}</div>
+            </button>
+          ))}
+          
+           
+            {/* <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
+              <div class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full" > H</div>
+              <div class="ml-2 text-sm font-semibold">Henry Boyd</div>
+          <div class="flex items-center justify-center ml-auto text-xs text-white bg-red-500 h-4 w-4 rounded leading-none">
+            2
+          </div>
+          </button> */}
+
+           
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col flex-auto h-full p-6">
+        <div class="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-50 h-full p-4">
+          <div class="flex flex-col h-full overflow-x-auto mb-4">
+            <div class="flex flex-col h-full">
+              <div class="grid grid-cols-12 gap-y-2">
+
+              {messages.map((message, index) => (
+                <>
+                  {message.sender === userId ? (
+                <div class="col-start-6 col-end-13 p-3 rounded-lg">
+                  <div class="flex items-center justify-start flex-row-reverse">
+                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">A</div>
+                    <div class="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
+                      <div>{message.message_content}</div>
+                      <div class="absolute text-[9px] w-3 bottom-0 right-0 -mb-5 mr-9 text-gray-500 whitespace-nowrap">{formatRelativeTime(message.timestamp)}</div>
+                    </div>
+                  </div>
+                </div>
+
+                  ) : (
+
+                <div class="col-start-1 col-end-8 p-3 rounded-lg">
+                  <div class="flex flex-row items-center">
+                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">A</div>
+                    <div class="relative ml-3 text-sm font-manrope bg-white-A700 py-2 px-4 shadow rounded-xl" >
+                      <div>{message.message_content}</div>
+                      <div class="absolute text-[9px] w-3 bottom-0 left-0 -mb-5 ml-1 text-gray-500 whitespace-nowrap">{formatRelativeTime(message.timestamp)}</div>
+                    </div>
+                  </div>
+                </div>
+                    )}
+
+                </>
+                     ))}
+
+              
+
+                
+              </div>
             </div>
-            <div className="bg-white p-4 border-t flex">
+          </div>
+          <div
+            class="flex flex-row items-center h-16 rounded-xl bg-white-A700 w-full px-4"
+          >
+            <div>
+              <button
+                class="flex items-center justify-center text-gray-400 hover:text-gray-600"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <div class="flex-grow ml-4">
+              <div class="relative w-full">
                 <input
-                    className="border rounded p-2 w-full"
-                    type="text"
-                    placeholder="Type your message..."
-                    value={messageInput}
-                    onChange={(e) => setMessageInput(e.target.value)}
+                  type="text"
+                  class="flex w-full border border-gray-200 rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
                 />
                 <button
-                    className="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    onClick={handleSendMessage}
+                  class="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
                 >
-                    Send
+                  <svg
+                    class="w-6 h-6"
+
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
                 </button>
+              </div>
             </div>
+            <div class="ml-4">
+              <button
+                class="flex items-center text-white-A700 justify-center bg-blue-400 py-2 hover:bg-indigo-600 rounded-xl text-white px-4 flex-shrink-0"
+                onClick={handleSendMessage}
+              >
+                <span>Send</span>
+                <span class="ml-2">
+                  <svg
+                    class="w-4 h-4 transform rotate-45 -mt-px"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                    ></path>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
-    // <div>
-    //                 <div className="bg-white-A700 flex md:flex-col flex-row font-inter md:gap-5 items-center justify-center px-4 rounded shadow-bs w-full">
-    //             <div className="flex flex-1 sm:flex-col flex-row gap-[26px] items-center justify-start w-full">
-    //               <div className="flex flex-1 flex-col gap-8 items-start justify-start w-full">
-    //                 <div className="flex sm:flex-col flex-row gap-4 items-center justify-start w-full">
-    //                   <div className="border-2 border-green-700 border-solid flex flex-col h-[62px] items-center justify-start p-[7px] rounded-[50%] w-[62px]">
-    //                     <div className="flex flex-col h-12 items-center justify-start rounded-[50%] w-12">
-    //                       <Img
-    //                         className="h-12 md:h-auto rounded-[50%] w-12"
-    //                         src="images/img_robototoyfacefinal2_48x48.png"
-    //                         alt="robototoyfacefi"
-    //                       />
-    //                     </div>
-    //                   </div>
-    //                   <div className="flex flex-1 flex-col gap-1 items-start justify-start w-full">
-    //                     <Text
-    //                       className="text-bluegray-800 text-lg w-full"
-    //                       size="txtInterBold18Bluegray800"
-    //                     >
-    //                       Ackerman
-    //                     </Text>
-    //                     <Text
-    //                       className="text-bluegray-400 text-sm w-full"
-    //                       size="txtInterRegular14Bluegray400"
-    //                     >
-    //                       My accout
-    //                     </Text>
-    //                   </div>
-    //                 </div>
-    //                 <div className="flex flex-col gap-6 items-start justify-start w-full">
-    //                   <Text
-    //                     className="text-bluegray-400 text-sm w-full"
-    //                     size="txtInterRegular14Bluegray400"
-    //                   >
-    //                     Online (10)
-    //                   </Text>
-    //                   <div className="flex sm:flex-col flex-row gap-7 items-center justify-start w-full">
-    //                     <List
-    //                       className="flex-1 sm:flex-col flex-row gap-6 grid sm:grid-cols-1 grid-cols-5 justify-start w-full"
-    //                       orientation="horizontal"
-    //                     >
-    //                       <div className="flex flex-1 flex-col gap-2 items-center justify-start w-full">
-    //                         <div className="md:h-12 h-[51px] relative w-[64%]">
-    //                           <div className="absolute flex flex-col h-12 inset-x-[0] items-center justify-start mx-auto top-[0] w-12">
-    //                             <div className="flex flex-col h-12 items-center justify-start rounded-[50%] w-12">
-    //                               <Img
-    //                                 className="h-12 md:h-auto rounded-[50%] w-12"
-    //                                 src="images/img_punktoyface1_48x48.png"
-    //                                 alt="punktoyfaceOne"
-    //                               />
-    //                             </div>
-    //                           </div>
-    //                           <div className="absolute bg-green-700 bottom-[0] h-[11px] outline outline-[2px] outline-white-A700 right-[4%] rounded-[5px] w-[11px]"></div>
-    //                         </div>
-    //                         <Text
-    //                           className="text-base text-bluegray-900 w-auto"
-    //                           size="txtInterMedium16Bluegray900"
-    //                         >
-    //                           Lee
-    //                         </Text>
-    //                       </div>
-    //                       <div className="flex flex-1 flex-col gap-2 items-center justify-start w-full">
-    //                         <div className="md:h-12 h-[51px] relative w-[64%]">
-    //                           <div className="absolute flex flex-col h-12 inset-x-[0] items-center justify-start mx-auto top-[0] w-12">
-    //                             <div className="flex flex-col h-12 items-center justify-start rounded-[50%] w-12">
-    //                               <Img
-    //                                 className="h-12 md:h-auto rounded-[50%] w-12"
-    //                                 src="images/img_indiahigh.png"
-    //                                 alt="indiahigh"
-    //                               />
-    //                             </div>
-    //                           </div>
-    //                           <div className="absolute bg-bluegray-200 bottom-[0] h-[11px] outline outline-[2px] outline-white-A700 right-[4%] rounded-[5px] w-[11px]"></div>
-    //                         </div>
-    //                         <Text
-    //                           className="text-base text-bluegray-900 w-auto"
-    //                           size="txtInterMedium16Bluegray900"
-    //                         >
-    //                           Riri
-    //                         </Text>
-    //                       </div>
-    //                       <div className="flex flex-1 flex-col gap-2 items-center justify-start w-full">
-    //                         <div className="md:h-12 h-[51px] relative w-[64%]">
-    //                           <div className="absolute flex flex-col h-12 inset-x-[0] items-center justify-start mx-auto top-[0] w-12">
-    //                             <div className="flex flex-col h-12 items-center justify-start rounded-[50%] w-12">
-    //                               <Img
-    //                                 className="h-12 md:h-auto rounded-[50%] w-12"
-    //                                 src="images/img_tintin22_48x48.png"
-    //                                 alt="tintinTwentyTwo"
-    //                               />
-    //                             </div>
-    //                           </div>
-    //                           <div className="absolute bg-bluegray-200 bottom-[0] h-[11px] outline outline-[2px] outline-white-A700 right-[4%] rounded-[5px] w-[11px]"></div>
-    //                         </div>
-    //                         <Text
-    //                           className="text-base text-bluegray-900 w-auto"
-    //                           size="txtInterMedium16Bluegray900"
-    //                         >
-    //                           Jimo
-    //                         </Text>
-    //                       </div>
-    //                       <div className="flex flex-1 flex-col gap-2 items-center justify-start w-full">
-    //                         <div className="md:h-12 h-[51px] relative w-[64%]">
-    //                           <div className="absolute flex flex-col h-12 inset-x-[0] items-center justify-start mx-auto top-[0] w-12">
-    //                             <div className="flex flex-col h-12 items-center justify-start rounded-[50%] w-12">
-    //                               <Img
-    //                                 className="h-12 md:h-auto rounded-[50%] w-12"
-    //                                 src="images/img_vangoghbyamrit1_48x48.png"
-    //                                 alt="vangoghbyamritOne"
-    //                               />
-    //                             </div>
-    //                           </div>
-    //                           <div className="absolute bg-bluegray-200 bottom-[0] h-[11px] outline outline-[2px] outline-white-A700 right-[4%] rounded-[5px] w-[11px]"></div>
-    //                         </div>
-    //                         <Text
-    //                           className="text-base text-bluegray-900 w-auto"
-    //                           size="txtInterMedium16Bluegray900"
-    //                         >
-    //                           Acker
-    //                         </Text>
-    //                       </div>
-    //                       <div className="flex flex-1 flex-col gap-2 items-center justify-start w-full">
-    //                         <div className="md:h-12 h-[51px] relative w-[64%]">
-    //                           <div className="absolute flex flex-col h-12 inset-x-[0] items-center justify-start mx-auto top-[0] w-12">
-    //                             <div className="flex flex-col h-12 items-center justify-start rounded-[50%] w-12">
-    //                               <Img
-    //                                 className="h-12 md:h-auto rounded-[50%] w-12"
-    //                                 src="images/img_punk9252toyfaceedita2.png"
-    //                                 alt="punk9252toyface"
-    //                               />
-    //                             </div>
-    //                           </div>
-    //                           <div className="absolute bg-bluegray-200 bottom-[0] h-[11px] outline outline-[2px] outline-white-A700 right-[4%] rounded-[5px] w-[11px]"></div>
-    //                         </div>
-    //                         <Text
-    //                           className="text-base text-bluegray-900 w-auto"
-    //                           size="txtInterMedium16Bluegray900"
-    //                         >
-    //                           Momo
-    //                         </Text>
-    //                       </div>
-    //                     </List>
-    //                     <Img
-    //                       className="h-6 w-6"
-    //                       src="images/img_arrowright_bluegray_400_24x24.svg"
-    //                       alt="arrowright"
-    //                     />
-    //                   </div>
-    //                 </div>
-    //                 <Input
-    //                   name="searchbox_One"
-    //                   placeholder="Search..."
-    //                   value={searchboxonevalue}
-    //                   onChange={(e) => setSearchboxonevalue(e)}
-    //                   className="font-medium p-0 placeholder:text-bluegray-400 sm:pr-5 text-bluegray-400 text-left text-xs w-full"
-    //                   wrapClassName="bg-gray-50 flex pl-4 pr-[35px] py-2.5 rounded w-full"
-    //                   prefix={
-    //                     <Img
-    //                       className="cursor-pointer h-5 mr-2 my-auto"
-    //                       src="images/img_search.svg"
-    //                       alt="search"
-    //                     />
-    //                   }
-    //                 //   suffix={
-    //                 //     <CloseSVG
-    //                 //       fillColor="#828fa2"
-    //                 //       className="cursor-pointer h-5 my-auto"
-    //                 //       onClick={() => setSearchboxonevalue("")}
-    //                 //       style={{
-    //                 //         visibility:
-    //                 //           searchboxonevalue?.length <= 0
-    //                 //             ? "hidden"
-    //                 //             : "visible",
-    //                 //       }}
-    //                 //       height={20}
-    //                 //       width={20}
-    //                 //       viewBox="0 0 20 20"
-    //                 //     />
-    //                 //   }
-    //                 ></Input>
-    //                 <List
-    //                   className="flex flex-col gap-5 items-end w-full"
-    //                   orientation="vertical"
-    //                 >
-    //                   <div className="flex flex-1 sm:flex-col flex-row gap-5 items-center justify-start my-0 w-full">
-    //                     <div className="md:h-12 h-[51px] relative w-[10%] sm:w-full">
-    //                       <div className="absolute flex flex-col h-12 inset-x-[0] items-center justify-start mx-auto top-[0] w-12">
-    //                         <div className="flex flex-col h-12 items-center justify-start rounded-[50%] w-12">
-    //                           <Img
-    //                             className="h-12 md:h-auto rounded-[50%] w-12"
-    //                             src="images/img_punktoyface1_48x48.png"
-    //                             alt="punktoyfaceOne"
-    //                           />
-    //                         </div>
-    //                       </div>
-    //                       <div className="absolute bg-green-700 bottom-[0] h-[11px] outline outline-[2px] outline-white-A700 right-[4%] rounded-[5px] w-[11px]"></div>
-    //                     </div>
-    //                     <div className="flex flex-1 sm:flex-col flex-row gap-6 items-start justify-start w-full">
-    //                       <div className="flex flex-1 flex-col gap-1 items-start justify-start w-full">
-    //                         <Text
-    //                           className="text-bluegray-800 text-lg w-full"
-    //                           size="txtInterBold18Bluegray800"
-    //                         >
-    //                           Lee Ankar
-    //                         </Text>
-    //                         <Text
-    //                           className="text-base text-bluegray-800 w-full"
-    //                           size="txtInterMedium16"
-    //                         >
-    //                           Hey! Can i meet you for a sec?
-    //                         </Text>
-    //                       </div>
-    //                       <div className="flex flex-col gap-2.5 items-center justify-center w-auto">
-    //                         <Text
-    //                           className="text-bluegray-400 text-right text-sm w-auto"
-    //                           size="txtInterRegular14Bluegray400"
-    //                         >
-    //                           now
-    //                         </Text>
-    //                         <Text
-    //                           className="bg-red-600 flex h-6 items-center justify-center rounded-[50%] text-center text-white-A700 text-xs w-6"
-    //                           size="txtInterBold12"
-    //                         >
-    //                           3
-    //                         </Text>
-    //                       </div>
-    //                     </div>
-    //                   </div>
-    //                   <Line className="self-center h-px bg-indigo-50 w-full" />
-    //                   <div className="flex flex-1 sm:flex-col flex-row gap-5 items-center justify-start my-0 w-full">
-    //                     <div className="md:h-12 h-[51px] relative w-[10%] sm:w-full">
-    //                       <div className="absolute flex flex-col h-12 inset-x-[0] items-center justify-start mx-auto top-[0] w-12">
-    //                         <div className="flex flex-col h-12 items-center justify-start rounded-[50%] w-12">
-    //                           <Img
-    //                             className="h-12 md:h-auto rounded-[50%] w-12"
-    //                             src="images/img_tintin22_48x48.png"
-    //                             alt="tintinTwentyTwo"
-    //                           />
-    //                         </div>
-    //                       </div>
-    //                       <div className="absolute bg-bluegray-200 bottom-[0] h-[11px] outline outline-[2px] outline-white-A700 right-[4%] rounded-[5px] w-[11px]"></div>
-    //                     </div>
-    //                     <div className="flex flex-1 sm:flex-col flex-row gap-6 items-start justify-start w-full">
-    //                       <div className="flex flex-1 flex-col gap-1 items-start justify-start w-full">
-    //                         <Text
-    //                           className="text-bluegray-800 text-lg w-full"
-    //                           size="txtInterBold18Bluegray800"
-    //                         >
-    //                           Jimo
-    //                         </Text>
-    //                         <Text
-    //                           className="text-base text-bluegray-400 w-full"
-    //                           size="txtInterRegular16"
-    //                         >
-    //                           Sorry for my mistaken ✓
-    //                         </Text>
-    //                       </div>
-    //                       <Text
-    //                         className="text-bluegray-400 text-right text-sm w-auto"
-    //                         size="txtInterRegular14Bluegray400"
-    //                       >
-    //                         23 mins
-    //                       </Text>
-    //                     </div>
-    //                   </div>
-    //                   <Line className="self-center h-px bg-indigo-50 w-full" />
-    //                   <div className="flex flex-1 sm:flex-col flex-row gap-5 items-center justify-start my-0 w-full">
-    //                     <div className="md:h-12 h-[51px] relative w-[10%] sm:w-full">
-    //                       <div className="absolute flex flex-col h-12 inset-x-[0] items-center justify-start mx-auto top-[0] w-12">
-    //                         <div className="flex flex-col h-12 items-center justify-start rounded-[50%] w-12">
-    //                           <Img
-    //                             className="h-12 md:h-auto rounded-[50%] w-12"
-    //                             src="images/img_punk9252toyfaceedita2.png"
-    //                             alt="punk9252toyface"
-    //                           />
-    //                         </div>
-    //                       </div>
-    //                       <div className="absolute bg-bluegray-200 bottom-[0] h-[11px] outline outline-[2px] outline-white-A700 right-[4%] rounded-[5px] w-[11px]"></div>
-    //                     </div>
-    //                     <div className="flex flex-1 sm:flex-col flex-row gap-6 items-start justify-start w-full">
-    //                       <div className="flex flex-1 flex-col gap-1 items-start justify-start w-full">
-    //                         <Text
-    //                           className="text-bluegray-800 text-lg w-full"
-    //                           size="txtInterBold18Bluegray800"
-    //                         >
-    //                           Momo
-    //                         </Text>
-    //                         <Text
-    //                           className="text-base text-bluegray-400 w-full"
-    //                           size="txtInterRegular16"
-    //                         >
-    //                           Sorry for my mistaken ✓
-    //                         </Text>
-    //                       </div>
-    //                       <Text
-    //                         className="text-bluegray-400 text-right text-sm w-auto"
-    //                         size="txtInterRegular14Bluegray400"
-    //                       >
-    //                         23 mins
-    //                       </Text>
-    //                     </div>
-    //                   </div>
-    //                   <Line className="self-center h-px bg-indigo-50 w-full" />
-    //                   <div className="flex flex-1 sm:flex-col flex-row gap-5 items-center justify-start my-0 w-full">
-    //                     <div className="md:h-12 h-[51px] relative w-[10%] sm:w-full">
-    //                       <div className="absolute flex flex-col h-12 inset-x-[0] items-center justify-start mx-auto top-[0] w-12">
-    //                         <div className="flex flex-col h-12 items-center justify-start rounded-[50%] w-12">
-    //                           <Img
-    //                             className="h-12 md:h-auto rounded-[50%] w-12"
-    //                             src="images/img_indiahigh.png"
-    //                             alt="indiahigh"
-    //                           />
-    //                         </div>
-    //                       </div>
-    //                       <div className="absolute bg-bluegray-200 bottom-[0] h-[11px] outline outline-[2px] outline-white-A700 right-[4%] rounded-[5px] w-[11px]"></div>
-    //                     </div>
-    //                     <div className="flex flex-1 sm:flex-col flex-row gap-6 items-start justify-start w-full">
-    //                       <div className="flex flex-1 flex-col gap-1 items-start justify-start w-full">
-    //                         <Text
-    //                           className="text-bluegray-800 text-lg w-full"
-    //                           size="txtInterBold18Bluegray800"
-    //                         >
-    //                           Riri lee
-    //                         </Text>
-    //                         <Text
-    //                           className="text-base text-bluegray-400 w-full"
-    //                           size="txtInterRegular16"
-    //                         >
-    //                           Sorry for my mistaken ✓
-    //                         </Text>
-    //                       </div>
-    //                       <Text
-    //                         className="text-bluegray-400 text-right text-sm w-auto"
-    //                         size="txtInterRegular14Bluegray400"
-    //                       >
-    //                         23 mins
-    //                       </Text>
-    //                     </div>
-    //                   </div>
-    //                 </List>
-    //               </div>
-    //               <Line className="bg-indigo-50 h-[747px] sm:h-px sm:w-full w-px" />
-    //             </div>
-    //             <div className="flex flex-1 flex-col items-start justify-start sm:px-5 px-[31px] w-full">
-    //               <div className="flex flex-col md:gap-10 gap-[104px] items-start justify-start w-full">
-    //                 <div className="flex flex-col gap-8 items-start justify-start w-full">
-    //                   <div className="flex flex-col gap-6 items-center justify-start w-full">
-    //                     <div className="flex flex-row items-center justify-between w-full">
-    //                       <div className="flex flex-col gap-2 items-start justify-start w-auto">
-    //                         <Text
-    //                           className="text-bluegray-800 text-lg w-auto"
-    //                           size="txtInterBold18Bluegray800"
-    //                         >
-    //                           Lee Ankar
-    //                         </Text>
-    //                         <div className="flex flex-col items-center justify-start w-[70%] md:w-full">
-    //                           <div className="flex flex-row gap-2 items-center justify-start pb-[3px] pr-[3px] w-full">
-    //                             <div className="bg-green-700 h-2 mb-1 mt-[7px] rounded-[50%] w-2"></div>
-    //                             <Text
-    //                               className="text-bluegray-800 text-sm"
-    //                               size="txtInterMedium14Bluegray800"
-    //                             >
-    //                               Online
-    //                             </Text>
-    //                           </div>
-    //                         </div>
-    //                       </div>
-    //                       <div className="flex flex-row gap-4 items-start justify-start w-auto">
-    //                         <Button className="bg-gray-50 flex h-12 items-center justify-center p-3.5 rounded-[50%] w-12">
-    //                           <Img
-    //                             className="h-5"
-    //                             src="images/img_search_bluegray_900.svg"
-    //                             alt="search"
-    //                           />
-    //                         </Button>
-    //                         <Button className="bg-gray-50 flex h-12 items-center justify-center p-3.5 rounded-[50%] w-12">
-    //                           <Img
-    //                             className="h-5"
-    //                             src="images/img_overflowmenu.svg"
-    //                             alt="overflowmenu"
-    //                           />
-    //                         </Button>
-    //                       </div>
-    //                     </div>
-    //                     <Line className="bg-indigo-50 h-px w-full" />
-    //                   </div>
-    //                   <div className="flex flex-col gap-6 items-start justify-start w-full">
-    //                     <div className="flex flex-col items-start justify-start w-full">
-    //                       <div className="flex flex-row gap-3 items-center justify-start w-[300px]">
-    //                         <div className="flex flex-col h-6 items-center justify-start rounded-[50%] w-6">
-    //                           <Img
-    //                             className="h-6 md:h-auto rounded-[50%] w-6"
-    //                             src="images/img_punktoyface1_24x24.png"
-    //                             alt="punktoyfaceOne"
-    //                           />
-    //                         </div>
-    //                         <div className="flex flex-col gap-2 items-start justify-start w-full">
-    //                           <Text
-    //                             className="text-bluegray-400 text-sm w-full"
-    //                             size="txtInterRegular14Bluegray400"
-    //                           >
-    //                             Lee Ankar{" "}
-    //                           </Text>
-    //                           <div className="bg-gray-50 flex flex-col items-start justify-start p-4 rounded-bl rounded-br rounded-tr w-full">
-    //                             <Text
-    //                               className="text-base text-bluegray-800 w-auto"
-    //                               size="txtInterMedium16"
-    //                             >
-    //                               Hey! Can i meet you for a sec?
-    //                             </Text>
-    //                           </div>
-    //                         </div>
-    //                       </div>
-    //                     </div>
-    //                     <div className="flex flex-col items-end justify-start w-full">
-    //                       <div className="flex flex-col gap-4 items-end justify-start w-auto">
-    //                         <div className="flex flex-row gap-2 items-end justify-start w-auto">
-    //                           <div className="bg-deep_orange-51 flex flex-col items-start justify-start p-4 rounded-bl rounded-tl rounded-tr w-[264px]">
-    //                             <Text
-    //                               className="text-base text-bluegray-800 w-auto"
-    //                               size="txtInterMedium16"
-    //                             >
-    //                               Hey! Can i meet you for a sec?
-    //                             </Text>
-    //                           </div>
-    //                           <Img
-    //                             className="h-5 w-5"
-    //                             src="images/img_checkmark_deep_orange_300_20x20.svg"
-    //                             alt="checkmark"
-    //                           />
-    //                         </div>
-    //                         <div className="flex flex-row gap-2 items-end justify-start w-[311px]">
-    //                           <div className="bg-gray-50 flex flex-col items-start justify-start p-4 rounded-bl-[12px] rounded-tl-[12px] rounded-tr-[12px] w-full">
-    //                             <div className="flex flex-col gap-4 items-start justify-start w-full">
-    //                               <Img
-    //                                 className="h-[133px] md:h-auto object-cover rounded-bl-lg rounded-br-lg w-full"
-    //                                 src="images/img_vector.png"
-    //                                 alt="vector_One"
-    //                               />
-    //                               <div className="flex flex-col gap-2 items-start justify-start w-full">
-    //                                 <Text
-    //                                   className="text-base text-bluegray-900 w-full"
-    //                                   size="txtInterSemiBold16Bluegray900"
-    //                                 >
-    //                                   ☕️ Life Style Coffee
-    //                                 </Text>
-    //                                 <Text
-    //                                   className="text-bluegray-402 text-sm w-full"
-    //                                   size="txtInterRegular14Bluegray402"
-    //                                 >
-    //                                   8350 Melrose Ave, USA
-    //                                 </Text>
-    //                               </div>
-    //                             </div>
-    //                           </div>
-    //                           <Img
-    //                             className="h-5 w-5"
-    //                             src="images/img_checkmark_deep_orange_300_20x20.svg"
-    //                             alt="checkmark_One"
-    //                           />
-    //                         </div>
-    //                       </div>
-    //                     </div>
-    //                   </div>
-    //                 </div>
-    //                 <div className="bg-gray-50 flex flex-col items-start justify-start px-[13px] py-2.5 rounded w-full">
-    //                   <div className="flex flex-row items-center justify-between w-full">
-    //                     <Input
-    //                       name="frame3801"
-    //                       placeholder="Enter message..."
-    //                       className="p-0 placeholder:text-bluegray-400 text-base text-bluegray-400 text-left w-full"
-    //                       wrapClassName="bg-gray-50 pb-1.5 pt-[9px] px-[3px]"
-    //                     ></Input>
-    //                     <div className="flex flex-row gap-6 items-start justify-start w-auto">
-    //                       <Img
-    //                         className="h-6 w-6"
-    //                         src="images/img_share.svg"
-    //                         alt="share"
-    //                       />
-    //                       <Img
-    //                         className="h-6 w-6"
-    //                         src="images/img_link.svg"
-    //                         alt="link"
-    //                       />
-    //                       <Img
-    //                         className="h-6 w-6"
-    //                         src="images/img_close_bluegray_400.svg"
-    //                         alt="close"
-    //                       />
-    //                     </div>
-    //                   </div>
-    //                 </div>
-    //               </div>
-    //             </div>
-    //           </div>
-    // </div>
+      </div>
+    </div>
+  </div>
+    </div>
   )
 }
 
+//  <div className="flex flex-col h-screen bg-gray-100">
+//       {/* <ChatHeader name={name} image={img} /> */}
+//          {/* {userId} {doctorId} */}
+//          <div className="flex-grow overflow-y-auto px-4 py-8" >
+//              {messages.map((message, index) => (
+//                      <div key={index} className={`flex flex-col mb-4 ${message.sender == userId ? 'items-end' : 'items-start'}`}>
+//                          <div className={`rounded-lg p-2 max-w-xs ${message.sender == userId ? 'bg-blue-500 text-white-A700 rounded-2xl p-3' : 'bg-white-A700 text-gray-800 rounded-2xl p-3'}`}>{message.message_content}</div>
+//                          <div className="text-xs text-gray-400 mt-1 ml-2">{/* {formatRelativeTime(message.timestamp)} */}</div>
+//                      </div>
+//                  ))}
+//          </div>
+//          <div className="bg-white p-4 border-t flex">
+//              <input
+//                  className="border rounded p-2 w-full"
+//                  type="text"
+//                  placeholder="Type your message..."
+//                  value={messageInput}
+//                  onChange={(e) => setMessageInput(e.target.value)}
+//              />
+//              <button
+//                  className="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+//                  onClick={handleSendMessage}
+//              >
+//                  Send
+//              </button>
+//          </div>
+//      </div>
 export default UserChat

@@ -8,6 +8,7 @@
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@googlemaps/react-wrapper": "^1.1.25",
+    "@material-tailwind/react": "^2.1.8",
     "@mui/icons-material": "^5.15.3",
     "@mui/lab": "^5.0.0-alpha.159",
     "@mui/material": "^5.15.3",
@@ -34,9 +35,12 @@
     "react-router-dom": "^6.21.2",
     "react-router-hash-link": "^2.4.3",
     "react-select": "^5.2.1",
+    "react-slick": "^0.29.0",
+    "react-toastify": "^10.0.4",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^3.1.0"
+    "redux-thunk": "^3.1.0",
+    "slick-carousel": "^1.8.1"
   },
   "scripts": {
     "start": "vite",
@@ -66,7 +70,7 @@
     "@vitejs/plugin-react": "^3.1.0",
     "autoprefixer": "10.4.2",
     "postcss": "^8.4.32",
-    "tailwindcss": "3.0.18",
+    "tailwindcss": "^3.0.18",
     "vite": "^4.1.1",
     "vite-tsconfig-paths": "3.6.0"
   }

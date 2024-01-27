@@ -1,18 +1,20 @@
 import axios from 'axios'
 import { Button, Img, Text } from 'components'
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
 function MyApartments() {
     const [myApartments, setMyApartments] = useState([])
     const navigate = useNavigate()
+    const userId = useSelector(state => state.auth.userId)
 
     const today = new Date();
   
     useEffect(() => {
       const fetchMyApartments = async () => {
         try {
-          const response = await axios.get('http://127.0.0.1:8008/api/rented_properties')
+          const response = await axios.get(`http://127.0.0.1:8008/api/rented_properties`)
           setMyApartments(response.data)
           console.log(response.data)
         } catch (error) {

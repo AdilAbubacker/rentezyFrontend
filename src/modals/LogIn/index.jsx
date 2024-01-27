@@ -5,6 +5,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { login } from "store/authSlice";
 import { Button, CheckBox, Img, Input, Line, Text } from "components";
 import axiosInstance from "api/axios";
+import { toast } from "react-toastify";
 
 const LogInModal = (props) => {
     const [email, setEmail] = useState('')
@@ -19,7 +20,7 @@ const LogInModal = (props) => {
       console.log(response.data)
       dispatch(login(response.data))
       props.onRequestClose()
-      
+      toast.success('login succefull')
     } catch (error) {
       if (error.response) {
 

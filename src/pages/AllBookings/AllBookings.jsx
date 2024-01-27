@@ -1,14 +1,16 @@
 import axios from 'axios'
 import { Button, Img, Text } from 'components'
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 function AllBookings() {
     const [bookings, setBookings] = useState([])
+    const userId = useSelector(state => state.auth.userId)
   
     useEffect(() => {
       const fetchBookings = async () => {
         try {
-          const response = await axios.get('http://127.0.0.1:8005/api/booking_listings')
+          const response = await axios.get(`http://127.0.0.1:8005/api/booking_listings/${userId}`)
           setBookings(response.data)
           console.log(response.data)
         } catch (error) {

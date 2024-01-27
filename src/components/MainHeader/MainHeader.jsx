@@ -8,8 +8,10 @@ import { FaUserAlt } from "react-icons/fa";
 import { IoChatbubble } from "react-icons/io5";
 import axios from "axios";
 import CreateAccountModal from "modals/CreateAccount";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const LandingPageHeader = (props) => {
+function MainHeader(props) {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isCreateAccountModalOpen, setIsCreateAccountModalOpen] = useState(false);
   const userId = useSelector(state => state.auth.userId)
@@ -82,6 +84,7 @@ const LandingPageHeader = (props) => {
     fetchNotifaications();
   }, [])
 
+  const notify = () => toast("Wow so easy!");
 
 
   const handleToggleCreateAccountModal = () => {
@@ -113,7 +116,7 @@ const LandingPageHeader = (props) => {
             <div className="flex flex-row gap-[11px] items-center justify-start">
               {/* <Img className="h-10 w-10" src="images/img_home.svg" alt="home" /> */}
               <Text
-                className="text-indi text-xl w-auto"
+                className="text-white-A700 text-xl w-auto"
                 size="txtManropeExtraBold20"
               >
                 RentEzy.
@@ -161,12 +164,22 @@ const LandingPageHeader = (props) => {
             >
               Property{" "}
             </Text>
-            <Text
+            <Text onClick={notify}
               className="text-base text-white-A700 w-auto"
               size="txtManropeSemiBold16"
             >
               Blog
             </Text>
+            <ToastContainer position="bottom-right"
+              autoClose={1500}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"/>
           </div>
           <div className="flex flex-row gap-4 h-[42px] md:h-auto sm:hidden items-center justify-start w-[228px]">
           {/* <button class="relative bg-blue-700 hover:bg-blue-800 duration-300 py-2 px-4 text-blue-100 rounded">Secondary
@@ -186,11 +199,11 @@ const LandingPageHeader = (props) => {
                 Scheduled Visits
               </Link>
             </Button>
-            <Button 
-              onClick={() => setIsLoginModalOpen(true)}
+            <Link to={'chat'} 
+              onClick={() => (true)}
               className="bg-gray-900 cursor-pointer font-manrope px-3 font-semibold py-3 rounded-full text-base text-center text-white-A700 w-full">
               <IoChatbubble />
-            </Button>
+            </Link>
             <Button
               onClick={toggleDropdown}
               className="relative bg-gray-900 cursor-pointer font-manrope font-semibold p-3 rounded-full text-base text-center text-white-A700 w-full"
@@ -205,7 +218,7 @@ const LandingPageHeader = (props) => {
                 <div className="absolute bg-white-A700 max-h-[80vh] overflow-y-auto right-0 mt-2 bg-white rounded-md shadow-lg overflow-hidden z-20" style={{ width: '20rem' }}>
                   <div className="py-2">
                     {notifications.map((notification, index) => (
-                      <div key={index} className="flex bg-white-A700 text-gray-900 items-center px-4 py-3 border-b hover:bg-gray-100 -mx-2">
+                      <div key={index} className="flex bg-white-A700 text-gray-900 text-[15px] items-center px-4 py-3 border-b hover:bg-gray-100 -mx-2">
                         <span>{notification.message}</span>
                       </div>
                     ))}
@@ -232,9 +245,7 @@ const LandingPageHeader = (props) => {
        <CreateAccountModal isOpen={isCreateAccountModalOpen} onToggleLoginModal={handleToggleLoginModal} 
        onRequestClose={closeCreateAccountModal} /> 
     </>
-  );
-};
+  )
+}
 
-LandingPageHeader.defaultProps = {};
-
-export default LandingPageHeader;
+export default MainHeader

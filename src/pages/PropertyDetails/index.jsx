@@ -12,6 +12,8 @@ import ScheduleVisitModal from "modals/ScheduleVisit";
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import BookNowModal from "modals/BookNowModal/BookNowModal";
+import { Carousel } from "@material-tailwind/react";
+
 // import { LocalizationProvider } from '@mui/x-date-pickers';
 // import AdapterDayjs from '@date-io/dayjs';
 
@@ -130,63 +132,50 @@ const PropertyDetailsPage = () => {
         <div className="flex flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
           <div className="flex flex-col gap-10 items-start justify-start w-full">
             <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
-            {/* <AliceCarousel mouseTracking items={items} touchTracking={true} autoWidth autoHeight/> */}
 
-            <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
-              <div className="flex md:flex-col flex-row gap-6 items-center justify-center max-w-[1200px] mx-auto w-full">
-
-                <div className="flex flex-1 flex-col items-center justify-start w-full">
-                  <Img
-                    className="h-[550px] md:h-auto object-cover rounded-bl-[10px] rounded-br-[10px] w-full"
-                    src={property.image}
-                    alt="rectangle5610"
-                  />
-                </div>
-                <div className="flex sm:flex-1 flex-col gap-6 h-[550px] md:h-auto items-start justify-start w-auto sm:w-full">
-                  <Img
-                    className="h-[263px] sm:h-auto object-cover rounded-bl-[10px] rounded-br-[10px] w-full"
-                    src={property.image}
-                    alt="rectangle5611"
-                  />
-                  <div className="h-[263px] relative w-96 sm:w-full">
-                    <Img
-                      className="h-[263px] m-auto object-cover rounded-[10px] w-full"
-                      src={property.image}
-                      alt="rectangle5612"
-                    />
-                    <Button
-                      className="bg-white-A700 bottom-[0] cursor-pointer flex items-center justify-center min-w-[122px] px-4 py-[9px] right-[0] rounded-[10px]"
-                      leftIcon={
-                        <Img
-                          className="h-6 mb-px mr-1.5 bottom-[0] right-[2%] absolute"
-                          src="images/img_mail.svg"
-                          alt="mail"
-                        />
-                      }
-                    >
-                     
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
+             
+            </div> */}
             <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
               <div className="flex md:flex-col flex-row gap-6 items-start justify-center max-w-[1200px] mx-auto w-full">
                 <div className="flex flex-1 flex-col gap-6 items-start justify-start w-full">
-                  <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start p-10 sm:px-5 rounded-[10px] w-full">
+
+                {/* <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start p-10 sm:px-5 rounded-none w-full">
+                    <div className="flex flex-col gap-4 items-start justify-start w-full">
+                          <Text
+                            className="leading-[120.00%] max-w-[900px] font-bold md:max-w-full sm:text-xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px]"
+                            // size="txtManropeExtraBold28"
+                          >
+                            {property.name}
+                          </Text>
+                          <Text
+                            className="text-gray-900 text-xl tracking-[-0.40px] w-full"
+                            size="txtManropeSemiBold20Gray900"
+                          >
+                            {property.address}, {property.city}
+                          </Text>
+                      </div></div> */}
+                      <Carousel className="rounded-none">
+                        <img
+                          src={property.image}
+                          alt="image 1"
+                          className="h-full w-full object-cover"
+                        />
+                        <img
+                          src={property.image}
+                          alt="image 2"
+                          className="h-full w-full object-cover"
+                        />
+                        <img
+                          src={property.image}
+                          alt="image 3"
+                          className="h-full w-full object-cover"
+                        />
+                      </Carousel>
+                  <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start p-10 sm:px-5   rounded-[0px] w-full">
                     <div className="flex flex-col gap-11 items-start justify-start w-full">
                       <div className="flex flex-col gap-6 items-start justify-start w-full">
-                     
                         <div className="flex flex-col gap-4 items-start justify-start w-full">
-                        {/* <div className="h-56 sm:h-64 xl:h-80 2xl:h-96">
-                          <Carousel>
-                            <img src={property.image} alt="..." />
-                            <img src={property.image} alt="..." />
-                            
-                          </Carousel>
-
-                        </div> */}
-
                           <Text
                             className="leading-[135.00%] max-w-[712px] md:max-w-full sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px]"
                             size="txtManropeExtraBold28"
@@ -217,7 +206,7 @@ const PropertyDetailsPage = () => {
                               </Text>
                             </div>
                           </div> */}
-                          <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-1 flex-col items-center justify-center sm:px-5 px-6 py-[7px] rounded-[10px] w-full">
+                          <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-1 flex-col items-center justify-center sm:px-5 px-6 py-[7px] rounded-[0px] w-full">
                             <div className="flex flex-col gap-1 items-start justify-start w-full">
                               <Text
                                 className="text-2xl md:text-[22px] text-gray-900 sm:text-xl tracking-[-0.48px] w-full"
@@ -296,7 +285,7 @@ const PropertyDetailsPage = () => {
                       </div>*/}
                     </div>
                   </div> 
-                  <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start p-10 sm:px-5 rounded-[10px] w-full">
+                  <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start p-10 sm:px-5 rounded-[0px] w-full">
                     <div className="flex flex-col gap-6 items-start justify-start w-full">
                       <Text
                         className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-auto"
@@ -434,7 +423,7 @@ const PropertyDetailsPage = () => {
                       </List>
                     </div>
                   </div>
-                  <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start p-10 sm:px-5 rounded-[10px] w-full">
+                  <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start p-10 sm:px-5 rounded-[0px] w-full">
                     <div className="flex flex-col gap-[26px] items-start justify-start w-full">
                       <Text
                         className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full"
@@ -528,9 +517,9 @@ const PropertyDetailsPage = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-white-A700 border border-bluegray-100 border-solid flex sm:flex-1 flex-col items-start justify-start  sm:px-5 rounded-[5px] w-auto sm:w-full px-2">
-                  <div  className="flex flex-row justify-evenly w-full items-center ">
-                    <div className={`w-full flex justify-center cursor-pointer items-center ${!isBookNowClicked ? 'border-b-2 border-gray-500 text-gray-900' : 'border-b-2 text-gray-500'}`} onClick={() => setIsBookNowClicked(false)}>
+                <div className="bg-white-A700 border border-bluegray-100 border-solid flex sm:flex-1 flex-col items-start justify-start  sm:px-5 rounded-[5px] w-auto sm:w-full px-2 sticky top-6">
+                  <div  className="flex flex-row justify-evenly w-full items-center">
+                    <div className={`w-full flex justify-center cursor-pointer sticky items-center ${!isBookNowClicked ? 'border-b-2 border-gray-500 text-gray-900' : 'border-b-2 text-gray-500'}`} onClick={() => setIsBookNowClicked(false)}>
                       <div
                         className="sm:text-2xl md:text-[26px] text-[17px] font-bold tracking-[-0.56px] py-4"
                         // size="txtManropeExtraBold28"

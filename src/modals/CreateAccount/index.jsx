@@ -2,12 +2,35 @@ import React, { useState } from "react";
 import { default as ModalProvider } from "react-modal";
 
 import { Button, CheckBox, Img, Input, Line, Text } from "components";
+import axiosInstance from "api/axios";
+import { toast } from "react-toastify";
 
 const CreateAccountModal = (props) => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState(initialState)
+  const [confirmPassword, setConfirmPassword] = useState('')
+
+  const createAccount = async () => {
+    try {
+      const accountData = { email, name, password }
+      const response = await axiosInstance.post('api/register/', accountData);
+      console.log(response.data)
+      props.onRequestClose()
+      toast.success('Account created succefully.')
+    } catch (error) {
+      if (error.response) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+        toast.error(error.response.data)
+
+      }else{
+        console.log(`Error: ${error.message}`)
+      }
+    }
+  }
+
   return (
     <ModalProvider
       appElement={document.getElementById("root")}
@@ -126,7 +149,9 @@ const CreateAccountModal = (props) => {
               </div>
             </div>
             <div className="flex flex-col gap-[18px] items-start justify-start w-full">
-              <Button className="bg-gray-900 cursor-pointer font-bold py-4 rounded-[10px] text-center text-lg text-white-A700 w-full">
+              <Button className="bg-gray-900 cursor-pointer font-bold py-4 rounded-[10px] text-center text-lg text-white-A700 w-full"
+                onClick={() => createAccount()}>
+                            
                 Create Account
               </Button>
               <Button
