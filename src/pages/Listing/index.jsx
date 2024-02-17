@@ -32,7 +32,7 @@ const ListingPage = () => {
     // useEffect(() => {
     //   const fethProperties = async () => {
     //     try {
-    //       const response = await axios.get(`http://127.0.0.1:8004/api/search/${searchData}`);
+    //       const response = await axiosInstance.get(`/api/search/${searchData}`);
     //       console.log(response.data)
     //       setProperties(response.data)
     //     } catch (error) {
@@ -45,7 +45,7 @@ const ListingPage = () => {
     useEffect(() => {
       const fetchProperties = async () => {
           try {
-              const response = await axios.get('http://127.0.0.1:8004/api/properties');
+              const response = await axios.get('http://127.0.0.1:8004/api/search/properties');
               setProperties(response.data);
           } catch (error) {
               if (error.response) {

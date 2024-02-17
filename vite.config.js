@@ -11,6 +11,7 @@ export default defineConfig({
   },
   plugins: [tsconfigPaths(), react()],
   server: {
-    host: '127.0.0.1',
+    host: 'rentezy.homes',
+    
   },
 });
