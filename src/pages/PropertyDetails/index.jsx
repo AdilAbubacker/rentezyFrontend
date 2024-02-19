@@ -37,7 +37,7 @@ const PropertyDetailsPage = () => {
     const fetchPropertyDetails = async () => {
       try {
         const response = await axiosInstance.get(
-          `/api/properties/${id}`
+          `/api/search/properties/${id}`
         );
         console.log(response.data.city);
         setProperty(response.data);
@@ -52,7 +52,7 @@ const PropertyDetailsPage = () => {
   useEffect(() => {
     const fetchProperties = async () => {
         try {
-            const response = await axiosInstance.get('/api/properties');
+            const response = await axiosInstance.get('/api/serch/properties');
             setProperties(response.data);
         } catch (error) {
             if (error.response) {
