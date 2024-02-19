@@ -52,7 +52,7 @@ const PropertyDetailsPage = () => {
   useEffect(() => {
     const fetchProperties = async () => {
         try {
-            const response = await axiosInstance.get('/api/serch/properties');
+            const response = await axiosInstance.get('/api/search/properties');
             setProperties(response.data);
         } catch (error) {
             if (error.response) {
