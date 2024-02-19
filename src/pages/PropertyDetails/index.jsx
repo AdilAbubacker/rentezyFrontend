@@ -13,6 +13,7 @@ import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import BookNowModal from "modals/BookNowModal/BookNowModal";
 import { Carousel } from "@material-tailwind/react";
+import axiosInstance from "api/axios";
 
 // import { LocalizationProvider } from '@mui/x-date-pickers';
 // import AdapterDayjs from '@date-io/dayjs';
@@ -51,7 +52,7 @@ const PropertyDetailsPage = () => {
   useEffect(() => {
     const fetchProperties = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:8004/api/properties');
+            const response = await axiosInstance.get('/api/properties');
             setProperties(response.data);
         } catch (error) {
             if (error.response) {
