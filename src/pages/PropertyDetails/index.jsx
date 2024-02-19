@@ -36,8 +36,8 @@ const PropertyDetailsPage = () => {
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8004/api/properties/${id}`
+        const response = await axiosInstance.get(
+          `/api/properties/${id}`
         );
         console.log(response.data.city);
         setProperty(response.data);
