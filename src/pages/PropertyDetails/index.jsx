@@ -65,7 +65,7 @@ const PropertyDetailsPage = () => {
         }
     }
     fetchProperties();
-}, []);
+}, [id]);
 
   const handleBookNow = async () => {
     try {
