@@ -29,36 +29,36 @@ const ListingPage = () => {
     const searchParams = new URLSearchParams(location.search);
     const searchData = searchParams.get('search');
 
-    // useEffect(() => {
-    //   const fethProperties = async () => {
-    //     try {
-    //       const response = await axiosInstance.get(`/api/search/${searchData}`);
-    //       console.log(response.data)
-    //       setProperties(response.data)
-    //     } catch (error) {
-    //       console.log('error retrieving properties', error)
-    //     }
-    //   }
-    //   fethProperties();
-    // }, [])
-
     useEffect(() => {
-      const fetchProperties = async () => {
-          try {
-              const response = await axiosInstance.get('api/search/properties');
-              setProperties(response.data);
-          } catch (error) {
-              if (error.response) {
-                  console.log(err.response.data);
-                  console.log(err.response.status);
-                  console.log(err.response.headers);
-              }else{
-                  console.log(`Error: ${error.message}`)
-              }
-          }
+      const fethProperties = async () => {
+        try {
+          const response = await axiosInstance.get(`/api/search/${searchData}`);
+          console.log(response.data)
+          setProperties(response.data)
+        } catch (error) {
+          console.log('error retrieving properties', error)
+        }
       }
-      fetchProperties();
-  }, []);
+      fethProperties();
+    }, [])
+
+  //   useEffect(() => {
+  //     const fetchProperties = async () => {
+  //         try {
+  //             const response = await axiosInstance.get('api/search/properties');
+  //             setProperties(response.data);
+  //         } catch (error) {
+  //             if (error.response) {
+  //                 console.log(err.response.data);
+  //                 console.log(err.response.status);
+  //                 console.log(err.response.headers);
+  //             }else{
+  //                 console.log(`Error: ${error.message}`)
+  //             }
+  //         }
+  //     }
+  //     fetchProperties();
+  // }, []);
 
   const landingPageCardPropList = [
     {},
