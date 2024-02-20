@@ -9,6 +9,7 @@ export default defineConfig({
 
   plugins: [tsconfigPaths(), react()],
   server: {
-    host: 'rentezy.com',
+    // host: 'rentezy.com',
+    host: '127.0.0.1',
   },
 });

@@ -8,6 +8,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSelector } from "react-redux";
 import axios from 'axios';
+import axiosInstance from 'api/axios';
 
 
 function BookNowModal(props) {
@@ -25,7 +26,7 @@ function BookNowModal(props) {
           move_in_date: moveInDate
         }
         console.log(roomDetails)
-        const response = await axios.post('http://127.0.0.1:8005/api/book/', roomDetails);
+        const response = await axiosInstance.post('/api/book/', roomDetails);
       
         // Check if the response contains the checkout_url
         if (response.data.checkout_url) {
