@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Img, Input, Line, List, Text } from 'components';
 import { formatRelativeTime } from '../../utils/TimeUtils'
+import axiosInstance from 'api/axios';
 
 function UserChat() {
     const [messages, setMessages] = useState([]);
@@ -54,7 +55,7 @@ function UserChat() {
       useEffect(() => {
         const loadMessages = async () => {
           try {
-            const response = await axios.get(`http://127.0.0.1:8006/chat/chatmessages/${userId}/${ownerId}/`)
+            const response = await axiosInstance.get(`/chat/chatmessages/${userId}/${ownerId}/`)
             console.log('messages loaded:', response.data)
             setMessages(response.data)
           } catch (error) {
@@ -68,7 +69,7 @@ function UserChat() {
         const fetchUsersChattedWith = async () => {
           try {
             console.log('userid:',userId)
-            const response = await axios.get(`http://127.0.0.1:8006/chat/users_chatted_with/${userId}`)
+            const response = await axiosInstance.get(`/chat/users_chatted_with/${userId}`)
             console.log('chatted users loaded:',response.data)
             setChattedUser(response.data)
           } catch (error) {
@@ -86,7 +87,7 @@ function UserChat() {
                 receiver: ownerId,
                 message_content: messageInput,
             };
-            const response = await axios.post('http://127.0.0.1:8006/chat/create/', newMessage);
+            const response = await axiosInstance.post('/chat/create/', newMessage);
             console.log(response.data)
 
             if (socket) {
