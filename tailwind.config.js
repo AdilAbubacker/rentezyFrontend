@@ -6,6 +6,7 @@ module.exports = withMT({
     "./index.html",
     "./src/**/**/*.{js,ts,jsx,tsx,html,mdx}",
     "./src/**/*.{js,ts,jsx,tsx,html,mdx}",
+    "./public/fonts/**/*.{woff,woff2,ttf,otf}"
     
   ],
   darkMode: "class",
