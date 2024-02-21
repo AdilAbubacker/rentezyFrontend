@@ -74,7 +74,7 @@ function MainHeader(props) {
   useEffect(() => {
     const fetchNotifaications = async () => {
       try {
-        const response = await axiosInstance.get(`/api/notificationmessages/${userId}`)
+        const response = await axiosInstance.get(`/api/notificationmessages/${userId}/`)
         console.log(response.data)
         setNotifications(response.data.messages)
         setUnreadCount(response.data.unread_count)
