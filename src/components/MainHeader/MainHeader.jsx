@@ -47,7 +47,7 @@ function MainHeader(props) {
   useEffect(() => {
     if (socket) {
         socket.onopen = () => {
-            console.log('websocket connetion opened')
+            console.log('notification websocket connetion opened')
         };
 
         socket.onmessage = (e) => {
