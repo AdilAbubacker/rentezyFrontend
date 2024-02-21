@@ -21,7 +21,7 @@ function UserChat() {
       const roomName = `${userId}_${ownerId}`;
       console.log(roomName)
       const chatSocket = new WebSocket(
-        `ws://rentezy.homes/ws/chat/${roomName}/`
+        `wss://rentezy.homes/ws/chat/${roomName}/`
         );
         setSocket(chatSocket);
       }, [userId, ownerId])
