@@ -21,7 +21,7 @@ function UserChat() {
       const roomName = `${userId}_${ownerId}`;
       console.log(roomName)
       const chatSocket = new WebSocket(
-        `ws://127.0.0.1:8006/ws/chat/${roomName}/`
+        `ws://rentezy.homes/ws/chat/${roomName}/`
         );
         setSocket(chatSocket);
       }, [userId, ownerId])
@@ -87,23 +87,20 @@ function UserChat() {
                 receiver: ownerId,
                 message_content: messageInput,
             };
+
             const response = await axiosInstance.post('/chat/create/', newMessage);
             console.log(response.data)
 
             if (socket) {
                 socket.send(JSON.stringify(newMessage));
                 console.log('message send')
-
                 setMessageInput('');    
             }
         } catch (error) {
             console.error('error sending messages:', error);
         }
-
         setMessageInput('');
     };
-
-    
     
   return (
   <div>
