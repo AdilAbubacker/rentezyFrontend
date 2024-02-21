@@ -37,7 +37,7 @@ function MainHeader(props) {
       const roomName = `room_${userId}`;
       console.log(roomName)
       const notificationSocket = new WebSocket(
-          `ws://127.0.0.1:8009/ws/notification/${roomName}/`
+          `wss://rentezy.homes/ws/notification/${roomName}/`
       );
       setSocket(notificationSocket);
     }
