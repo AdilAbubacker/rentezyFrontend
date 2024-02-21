@@ -10,6 +10,7 @@ import axios from "axios";
 import CreateAccountModal from "modals/CreateAccount";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axiosInstance from "api/axios";
 
 function MainHeader(props) {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -24,7 +25,7 @@ function MainHeader(props) {
     setDropdownOpen(!isDropdownOpen);
     setUnreadCount(0)
     try {
-      const response = await axios.post(`http://127.0.0.1:8009/api/mark-all-unread-notifications-as-read/${userId}/`)
+      const response = await axiosInstance.post(`/api/mark-all-unread-notifications-as-read/${userId}/`)
       console.log(response.data)
     } catch (error) {
       console.error('error while marking notifications read',error)
@@ -60,7 +61,7 @@ function MainHeader(props) {
         };
     
         socket.onclose = (e) => {
-            console.error('Chat socket closed unexpectedly');
+            console.error('Notification socket closed unexpectedly');
         };
 
     return () => {
@@ -73,7 +74,7 @@ function MainHeader(props) {
   useEffect(() => {
     const fetchNotifaications = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8009/api/notificationmessages/${userId}`)
+        const response = await axiosInstance.get(`/api/notificationmessages/${userId}`)
         console.log(response.data)
         setNotifications(response.data.messages)
         setUnreadCount(response.data.unread_count)
