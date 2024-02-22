@@ -13,7 +13,7 @@ function RentDetails() {
     useEffect(() => {
       const fetchRentPayments = async () => {
         try {
-          const response = await axios.get(`http://127.0.0.1:8008/api/rented_properties/${rent_id}`)
+          const response = await axiosInstance.get(`/api/rented_properties/${rent_id}`)
           setMyApartment(response.data.rental_agreement)
           setMonthlyPayments(response.data.monthly_payments)
           console.log(response.data.monthly_payments[0].amount)
