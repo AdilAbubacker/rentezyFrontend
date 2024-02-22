@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import { Button, Img, Text } from 'components'
 import axios from 'axios';
+import axiosInstance from 'api/axios';
 
 function RentDetails() {
     const [myApartment, setMyApartment] = useState([])
@@ -40,7 +41,7 @@ function RentDetails() {
             monthly_payment_id: id,
           }
           console.log(paymentDetails)
-          const response = await axios.post('http://127.0.0.1:8008/api/pay_monthly_rent', paymentDetails);
+          const response = await axiosInstance.post('/api/pay_monthly_rent', paymentDetails);
           console.log(response)
           // Check if the response contains the checkout_url
           if (response.data.checkout_url) {
