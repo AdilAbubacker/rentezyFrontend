@@ -1,3 +1,4 @@
+import axiosInstance from 'api/axios'
 import axios from 'axios'
 import { Button, Img, Text } from 'components'
 import React, { useEffect, useState } from 'react'
@@ -14,7 +15,7 @@ function MyApartments() {
     useEffect(() => {
       const fetchMyApartments = async () => {
         try {
-          const response = await axios.get(`http://127.0.0.1:8008/api/rented_properties`)
+          const response = await axiosInstance.get(`/api/rented_properties`)
           setMyApartments(response.data)
           console.log(response.data)
         } catch (error) {
