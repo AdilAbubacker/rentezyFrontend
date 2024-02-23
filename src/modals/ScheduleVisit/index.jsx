@@ -6,6 +6,7 @@ import Lottie from 'lottie-react';
 import axios from "axios";
 import { useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
+import axiosInstance from "api/axios";
 
 function ScheduleVisitModal(props) {
   const [dates, setDates] = useState([]);
@@ -19,7 +20,7 @@ function ScheduleVisitModal(props) {
   useEffect(() => {
     const fetchDates = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8007/api/dates_and_times/65')
+        const response = await axiosInstance.get('/api/dates_and_times/65')
         setDates(response.data.dates)
         setTimes(response.data.times)
       } catch (error) {
@@ -32,7 +33,7 @@ function ScheduleVisitModal(props) {
 
   const handleScheduleVisit = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:8007/api/schedule_visit', {
+      const response = await axiosInstance.post('/api/schedule_visit', {
         "room_id":68,
         "tenant_id":userId,
         "selected_time":selectedTime,
