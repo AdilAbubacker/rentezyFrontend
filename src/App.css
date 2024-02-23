@@ -10,3 +10,6 @@ url("/assets/fonts/ManropeSemiBold.ttf") format("truetype");
 body {
 font-family: "Manrope", sans-serif;
 }
+.font-manrope {
+    font-family: Manrope;
+}

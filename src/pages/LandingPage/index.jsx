@@ -36,16 +36,16 @@ const LandingPagePage = () => {
             <div className="flex md:flex-col flex-row md:gap-10 gap-[100px] items-start justify-start w-full">
               <div className="flex flex-1 flex-col gap-10 items-center justify-start pt-16 w-full">
                 <div className="flex flex-col gap-4 items-start justify-start w-full">
-                  <Text
+                  <div
                     className="leading-[140.00%] sm:text-4xl font-manrope md:text-[42px] text-[46px] text-white-A700 tracking-[-0.92px]"
-                    size="txtManropeExtraBold46"
+                    // size="txtManropeExtraBold46"
                   >
                     <>
                       Find your next home in
                       <br />
                       minutes, for free.
                     </>
-                  </Text>
+                  </div>
 
                 </div>
                 <div className="bg-white-A700 flex flex-col items-start justify-start p-1 sm:px-5 rounded-[60px] w-full">
