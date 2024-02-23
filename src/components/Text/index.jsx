@@ -1,7 +1,7 @@
 import React from "react";
 
 const sizeClasses = {
-  txtManropeExtraBold46: "font-extrabold font-manrope",
+  txtManropeExtraBold46: "font-manrope",
   txtManropeBold18Gray900: "font-bold font-manrope",
   txtManropeBold18Gray600: "font-bold font-manrope",
   txtManropeExtraBold28: "font-extrabold font-manrope",
