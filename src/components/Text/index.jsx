@@ -36,7 +36,7 @@ const sizeClasses = {
   txtManropeSemiBold24: "font-manrope",
   txtManropeBold22: "font-manrope",
   txtManropeMedium16: "font-manrope",
-  txtMarkoOneRegular20: "font-markoone",
+  txtMarkoOneRegular20: "font-manrope",
   txtManropeSemiBold1283Gray700: "font-manrope",
 };
 
