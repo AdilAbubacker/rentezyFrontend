@@ -1,7 +1,10 @@
 @font-face {
 font-family: "Manrope";
-src: url("/assets/fonts/ManropeBold.ttf") format("truetype");
-src:url("/assets/fonts/ManropeRegular.ttf") format("truetype");
+src: url("/assets/fonts/ManropeBold.ttf") format("truetype"),
+url("/assets/fonts/ManropeExtraBold.ttf") format("truetype"),
+url("/assets/fonts/ManropeMedium.ttf") format("truetype"),
+url("/assets/fonts/ManropeRegular.ttf") format("truetype"),
+url("/assets/fonts/ManropeSemiBold.ttf") format("truetype");
 }
 
 body {
