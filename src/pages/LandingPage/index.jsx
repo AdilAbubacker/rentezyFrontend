@@ -95,14 +95,13 @@ const LandingPagePage = () => {
                     className="leading-[140.00%] max-w-[488px] md:max-w-full text-4xl sm:text-[32px] md:text-[34px] text-gray-900 tracking-[-0.72px]"
                     size="txtManropeExtraBold36"
                   >
-                    Simple & easy way to find your dream Appointment
+                    Pay rent with just a few clicks.
                   </Text>
                   <Text
                     className="leading-[180.00%] max-w-[488px] md:max-w-full text-gray-900 text-lg"
                     size="txtManropeRegular18"
                   >
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry.{" "}
+                    Pay your rent securely online, or setup autopay so you never have to woryy about it,
                   </Text>
                 </div>
                 <Button className="bg-gray-900 cursor-pointer font-semibold min-w-[138px] py-[13px] rounded-[10px] text-base text-center text-white-A700">
@@ -179,7 +178,7 @@ const LandingPagePage = () => {
                     >
                       <>
                         Enjoy your <br />
-                        Appointment
+                        Appartment
                       </>
                     </Text>
                   </div>
