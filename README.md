@@ -19,46 +19,49 @@ graph LR
     classDef gateway fill:#d4d4d4,stroke:#333,stroke-width:2px;
     classDef database fill:#d1ecf1,stroke:#0c5460,stroke-width:2px;
     classDef cache fill:#f8d7da,stroke:#721c24,stroke-width:2px;
-    classDef bus fill:#fdfdfe,stroke:#383d41,stroke-width:2px;
+    classDef bus fill:#fdfdfe,stroke:#383d41,stroke-width:2px,color:#000;
     classDef consumer fill:#ffeccc,stroke:#806602,stroke-width:2px;
-    classDef external fill:#e2e3e5,stroke:#383d41,stroke-width:2px;
 
-    %% --- Define Components ---
-    subgraph Clients
-        direction TB
-        landlord["Landlord App <br> (React)"]:::client
-        tenant["Customer App <br> (Search, Booking, Chat)"]:::client
-    end
+    %% --- Main System Block ---
+    subgraph "RentEzy System Architecture"
+        direction LR
 
-    subgraph "Backend System"
-        gateway("API Gateway"):::gateway
-        
-        subgraph "Core Services"
-            prop_service("Property Service"):::service
-            search_service("Search Service"):::service
-            booking_service("Booking Service"):::service
-            payment_service("Payment Service"):::service
+        %% --- Column 1: Clients & Gateway ---
+        subgraph "Clients"
+            direction TB
+            landlord["Landlord App<br>(React)"]:::client
+            tenant["Customer App<br>(Search, Booking)"]:::client
         end
 
-        subgraph "Databases & Caches"
-            prop_db[("PostgreSQL <br> Properties")]:::database
-            booking_db[("PostgreSQL <br> Bookings")]:::database
-            es_cluster(("Elasticsearch")):::database
-            redis_cache{{"Redis <br> Cache"}}:::cache
+        gateway("API<br>Gateway"):::gateway
+
+        %% --- Column 2: Services & Data Stores ---
+        subgraph "Core Services & Databases"
+            direction TB
+            
+            subgraph "Services"
+                prop_service("Property Service"):::service
+                search_service("Search Service"):::service
+                booking_service("Booking Service"):::service
+            end
+            
+            subgraph "Data Stores"
+                prop_db[("PostgreSQL<br>Properties")]:::database
+                es_cluster(("Elasticsearch")):::database
+                booking_db[("PostgreSQL<br>Bookings")]:::database
+                redis_cache{{"Redis Cache"}}:::cache
+            end
         end
 
-        subgraph "External Integrations"
-           stripe[/Stripe API/]:::external
+        %% --- Column 3: Async Processing (Tall Rectangle) ---
+        subgraph "Asynchronous Processing"
+            direction TB
+            kafka_bus(["Apache Kafka<br>Event Bus"]):::bus
+            note_consumer("Notification<br>Consumer"):::consumer
+            search_consumer("Search Index<br>Consumer"):::consumer
+            celery_consumer("Background Task<br>Consumer"):::consumer
         end
-    end
 
-    subgraph "Async Processing"
-        kafka_bus(["Apache Kafka <br> Event Bus"]):::bus
-        subgraph "Event Consumers"
-             note_consumer("Notification Consumer"):::consumer
-             search_consumer("Search Index Consumer"):::consumer
-             celery_consumer("Background Task Consumer"):::consumer
-        end
     end
 
     %% --- Define Connections ---
@@ -68,22 +71,18 @@ graph LR
     gateway --> prop_service
     gateway --> search_service
     gateway --> booking_service
-    gateway --> payment_service
 
     prop_service --> prop_db
+    search_service --> es_cluster
     booking_service --> booking_db
     booking_service --> redis_cache
-    search_service --> es_cluster
-    payment_service --> stripe
 
     prop_service -- Publishes Events --> kafka_bus
     booking_service -- Publishes Events --> kafka_bus
-    payment_service -- Publishes Events --> kafka_bus
-
-    kafka_bus -- Events --> note_consumer
-    kafka_bus -- Property Events --> search_consumer
-    kafka_bus -- Booking Events --> celery_consumer
-```
+    
+    kafka_bus --> note_consumer
+    kafka_bus --> search_consumer
+    kafka_bus --> celery_consumer```
 
 ---
 
