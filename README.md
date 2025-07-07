@@ -1,126 +1,167 @@
-## adil_s_application2
+# RentEzy - A Distributed Property Management Platform
 
-Generated with ❤️ from [DhiWise](https://www.dhiwise.com)
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Archived-red?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Python-3.9-blue?style=for-the-badge&logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/Django-4.x-darkgreen?style=for-the-badge&logo=django" alt="Django">
+  <img src="https://img.shields.io/badge/React-18.x-blue?style=for-the-badge&logo=react" alt="React">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+</p>
 
-## Description
+**RentEzy** is a comprehensive, cloud-native property management platform engineered from the ground up using a distributed, event-driven microservices architecture. It's designed not just as a web application, but as a resilient, scalable, and maintainable system capable of handling complex, real-world property rental workflows.
 
-- This React application is built using [Vite](https://vitejs.dev/).
-- It uses [Tailwind CSS](https://tailwindcss.com/)
-- The application is generated in JavaScript.
+---
 
-## Pre-requisites
+## ► Core Architectural Philosophy
 
-- [git](https://git-scm.com/) - v2.13 or greater
-- [NodeJS](https://nodejs.org/en/) - v16 or greater
-- [npm](https://www.npmjs.com/) - v6 or greater
+The fundamental goal of RentEzy was to build a system that avoids the pitfalls of a traditional monolith. The architecture is built on three key principles:
 
-## Running in dev environment
+1.  **High Cohesion, Loose Coupling:** Each microservice has a single, well-defined responsibility (e.g., `auth_service`, `booking_service`). Services are independent and can be developed, deployed, and scaled without impacting others.
+2.  **Asynchronous Communication:** The system uses **Apache Kafka** as its central nervous system. This event-driven approach ensures resilience; if one service fails, others can continue to function, and requests are not lost. It also enables powerful, event-sourced patterns.
+3.  **Scalability and Resilience:** The entire platform is containerized with **Docker** and orchestrated with **Kubernetes**, allowing for automated scaling, self-healing, and efficient resource management in a cloud environment.
 
-1.  `cd YOUR_APPLICATION`
-2.  `npm install`
-3.  `npm start`
+---
 
-## .env file
+## ► System Architecture Diagram
 
-This file contains various environment variables that you can configure.
+This diagram illustrates the flow of communication between services through the API Gateway and the central Kafka message bus.
 
-**VITE_GOOGLE_CLIENT_ID** - Your Google Client ID
+```mermaid
+graph TD
+    subgraph "Client (Browser)"
+        A[React Frontend]
+    end
 
-## Folder Structure
+    subgraph "API Gateway (Django)"
+        B[Authentication & Routing]
+    end
 
-```
-.
-├── package.json
-├── postcss.config.js
-├── vite.config.js
-├── index.html
-├── public
-│   ├── assets
-│   │   └── images --------- All Project Images
-│   ├── favicon.ico
-│   ├── manifest.json
-│   └── robots.txt
-├── README.md
-├── src
-│   ├── App.jsx
-│   ├── assets
-│   │   └── fonts ---------- Project fonts
-│   ├── components --------- UI and Detected Common Components
-│   ├── constants ---------- Project constants, eg: string consts
-│   ├── hooks -------------- Helpful Hooks
-│   ├── index.jsx
-│   ├── pages -------------- All route pages
-│   ├── Routes.jsx ---------- Routing
-│   ├── styles
-│   │   ├── index.css ------ Other Global Styles
-│   │   └── tailwind.css --- Default Tailwind modules
-│   └── util
-│       └── index.jsx ------- Helpful utils
-└── tailwind.config.js ----- Entire theme config, colors, fonts etc.
-```
+    subgraph "Core Services"
+        C[Auth Service]
+        D[Property Service]
+        E[Booking Service]
+        F[Rent Service]
+    end
 
-For the project to build, **these files must exist with exact filenames**:
+    subgraph "Real-time Services"
+        G[Chat Service]
+        H[Notification Service]
+    end
 
-- `index.html` is the page template;
-- `src/index.jsx` is the JavaScript entry point.
+    subgraph "Asynchronous Workers & Search"
+        I[Search Consumer]
+        J[Celery Workers]
+    end
 
-You may create subdirectories inside src.
+    subgraph "Data & Messaging Tier"
+        K[(PostgreSQL)]
+        L[(Elasticsearch)]
+        M[(Redis)]
+        N((Apache Kafka))
+    end
 
-## Available Scripts
+    A --> B
+    B --> C
+    B --> D
+    B --> E
+    B --> F
+    B <--> G
 
-In the project directory, you can run:
+    C -- Publishes event --> N
+    D -- Publishes event --> N
+    E -- Publishes event --> N
+    F -- Publishes event --> N
 
-### `npm start`
+    N -- Consumes event --> H
+    N -- Consumes event --> I
 
-Runs the app in the development mode.<br>
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+    D -- Writes to --> K
+    E -- Writes to --> K
+    F -- Writes to --> K
+    
+    I -- Writes to --> L
+    
+    B -- Queries --> L
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time.
-
-## Installing a Dependency
-
-You can install any dependencies (for example, React Router) with `npm`:
-
-```sh
-npm install --save react-router
+    E -- Uses --> M
+    F -- Uses --> M
+    J -- Uses --> M
 ```
 
-Alternatively you may use `yarn`:
+---
 
-```sh
-yarn add react-router
+## ► Technical Deep Dive & Key Features
+
+<details>
+  <summary><strong>API Gateway & Service Discovery</strong></summary>
+  
+  An API Gateway (built with Django) acts as the single entry point for all client requests. It is responsible for:
+  - **Authentication:** Validating JWTs for secure access.
+  - **Request Routing:** Directing incoming requests to the appropriate downstream service.
+  - **Rate Limiting & Caching:** Protecting the system from abuse and improving performance.
+  This pattern simplifies the client-side implementation and provides a centralized point for cross-cutting concerns.
+</details>
+
+<details>
+  <summary><strong>Event-Driven Core with Apache Kafka</strong></summary>
+  
+  Services communicate asynchronously by producing and consuming events on Kafka topics. This decouples services and creates a highly resilient system.
+  - **Example Flow:** When a new property is listed, the `property_service` publishes a `property_created` event to a Kafka topic.
+  - The `notification_service` consumes this event to alert relevant users.
+  - The `search_consumer` consumes this event to update the Elasticsearch index.
+  This ensures that even if the notification service is down, the search index will still be updated, and vice-versa.
+</details>
+
+<details>
+  <summary><strong>High-Performance Search with Elasticsearch (CQRS Pattern)</strong></summary>
+  
+  To avoid slow, complex SQL queries on the primary database, RentEzy implements a Command Query Responsibility Segregation (CQRS) pattern for search.
+  - **Commands (Writes):** All data modifications (creating/updating properties) are handled by the core services and written to the primary **PostgreSQL** database.
+  - **Queries (Reads):** A dedicated `search_consumer` listens for data change events from Kafka and updates a denormalized **Elasticsearch** index. All search queries are then routed through the API Gateway directly to Elasticsearch, providing a fast, responsive, and feature-rich search experience (e.g., full-text search, filtering, geo-spatial queries).
+</details>
+
+<details>
+  <summary><strong>Concurrency-Safe Bookings & Payments</strong></summary>
+  
+  - **Race Condition Prevention:** The `booking_service` uses database-level transactional locking (`SELECT FOR UPDATE`) to prevent race conditions where two users might try to book the same property at the exact same time.
+  - **Automated Payments & Scheduling:** **Celery** and **Redis** are used to handle background tasks. **Celery Beat** schedules recurring monthly rent payments, late fee calculations, and payment reminders. If a payment fails, a Celery worker automatically handles the room release logic.
+</sturdy>
+
+<details>
+  <summary><strong>Real-time Communication with WebSockets</strong></summary>
+  
+  **Django Channels** and WebSockets power the real-time features:
+  - **Live Chat:** A dedicated `chat_service` manages WebSocket connections for real-time messaging between users.
+  - **Event-Driven Notifications:** The `notification_service` pushes real-time alerts to clients when relevant events (e.g., new message, booking confirmed) occur anywhere in the system.
+</details>
+
+---
+
+## ► Deployment & Infrastructure
+
+The entire platform is designed for cloud-native deployment.
+- **Containerization:** All 10+ services are containerized using **Docker**.
+- **Orchestration:** **Kubernetes** (on **AWS EKS**) is used to manage and orchestrate the containers, providing automated scaling, self-healing, and zero-downtime deployments.
+- **Persistent Storage:** **AWS EFS** (Elastic File System) is used as the persistent storage solution for services that require a shared file system, managed via the EFS CSI driver for Kubernetes.
+- **CI/CD:** (Describe your CI/CD pipeline here if you have one, e.g., "GitHub Actions are used to automate testing and container image builds.")
+
+---
+
+## ► How to Run Locally
+
+To get the full system running locally, you will need Docker and Docker Compose installed.
+
+```bash
+# 1. Clone the repository
+git clone [https://github.com/your-username/rentezy.git](https://github.com/your-username/rentezy.git)
+cd rentezy
+
+# 2. Set up environment variables
+# (Create a .env file based on the provided .env.example)
+cp .env.example .env
+
+# 3. Build and run the services
+docker-compose up --build
 ```
+This will spin up all the services, databases, and the Kafka message bus, creating a fully functional local environment.
 
-## License
-
-MIT License
-
-Copyright (c) 2023 DhiWise
-
-Permission is hereby granted, to any person obtaining a copy of this software and associated documentation files (the "Software"),to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-## DhiWise Support
-
-<a href="https://twitter.com/dhiwise"><img src="https://user-images.githubusercontent.com/35039342/55471524-8e24cb00-5627-11e9-9389-58f3d4419153.png" width="60" alt="DhiWise Twitter"></a>
-
-<a href="https://www.youtube.com/c/DhiWise"><img src="https://cdn.vox-cdn.com/thumbor/0kpe316UpZWk53iw3bOLoJfF6hI=/0x0:1680x1050/1400x1400/filters:focal(706x391:974x659):format(gif)/cdn.vox-cdn.com/uploads/chorus_image/image/56414325/YTLogo_old_new_animation.0.gif" width="60" alt="DhiWise YouTube"></a>
-
-<a href="https://discord.gg/UPhCetBkVu"><img src="https://user-images.githubusercontent.com/47489894/183043664-b01aac56-0372-458a-bde9-3f2a6bded21b.png" width="60" alt="DhiWise Discord"></a>
-
-<a href="https://docs.dhiwise.com/docs/react/intro"><img src="https://global-uploads.webflow.com/618e36726d3c0f19c9284e56/62383865d5477f2e4f6b6e2e_main-monogram-p-500.png" width="60" alt="DhiWise Documentation"></a>
