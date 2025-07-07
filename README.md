@@ -93,6 +93,7 @@ graph LR
     kafka_bus -- Consumes all_events --> notification_service
     kafka_bus -- Consumes payment_events --> celery_workers
 ## ► System Architecture Diagram
+```mermaid
 graph LR
     subgraph Clients
         direction TB
@@ -164,6 +165,7 @@ graph LR
     kafka_bus -- Consumes property_events --> search_consumer
     kafka_bus -- Consumes all_events --> notification_service
     kafka_bus -- Consumes payment_events --> celery_workers
+```
 This diagram illustrates the flow of communication between services through the API Gateway and the central Kafka message bus.
 
 ```mermaid
