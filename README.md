@@ -19,49 +19,42 @@ graph LR
     classDef gateway fill:#d4d4d4,stroke:#333,stroke-width:2px;
     classDef database fill:#d1ecf1,stroke:#0c5460,stroke-width:2px;
     classDef cache fill:#f8d7da,stroke:#721c24,stroke-width:2px;
-    classDef bus fill:#fdfdfe,stroke:#383d41,stroke-width:2px,color:#000;
+    classDef bus fill:#fdfdfe,stroke:#383d41,stroke-width:2px,height:100px;
     classDef consumer fill:#ffeccc,stroke:#806602,stroke-width:2px;
+    classDef external fill:#e2e3e5,stroke:#383d41,stroke-width:2px;
 
-    %% --- Main System Block ---
-    subgraph "RentEzy System Architecture"
+    %% --- Main Architecture Flow ---
+    subgraph Clients
+        landlord["Landlord App <br> (React)"]:::client
+        tenant["Customer App <br> (Search, Booking, Chat)"]:::client
+    end
+
+    gateway("API Gateway"):::gateway
+
+    subgraph "Core Services & Databases"
         direction LR
-
-        %% --- Column 1: Clients & Gateway ---
-        subgraph "Clients"
+        subgraph Services
             direction TB
-            landlord["Landlord App<br>(React)"]:::client
-            tenant["Customer App<br>(Search, Booking)"]:::client
+            prop_service("Property Service"):::service
+            search_service("Search Service"):::service
+            booking_service("Booking Service"):::service
+            payment_service("Payment Service"):::service
         end
-
-        gateway("API<br>Gateway"):::gateway
-
-        %% --- Column 2: Services & Data Stores ---
-        subgraph "Core Services & Databases"
-            direction TB
-            
-            subgraph "Services"
-                prop_service("Property Service"):::service
-                search_service("Search Service"):::service
-                booking_service("Booking Service"):::service
-            end
-            
-            subgraph "Data Stores"
-                prop_db[("PostgreSQL<br>Properties")]:::database
-                es_cluster(("Elasticsearch")):::database
-                booking_db[("PostgreSQL<br>Bookings")]:::database
-                redis_cache{{"Redis Cache"}}:::cache
-            end
+        subgraph Databases & Caches
+             direction TB
+             prop_db[("PostgreSQL <br> Properties")]:::database
+             booking_db[("PostgreSQL <br> Bookings")]:::database
+             es_cluster(("Elasticsearch")):::database
+             redis_cache{{"Redis Cache"}}:::cache
         end
-
-        %% --- Column 3: Async Processing (Tall Rectangle) ---
-        subgraph "Asynchronous Processing"
-            direction TB
-            kafka_bus(["Apache Kafka<br>Event Bus"]):::bus
-            note_consumer("Notification<br>Consumer"):::consumer
-            search_consumer("Search Index<br>Consumer"):::consumer
-            celery_consumer("Background Task<br>Consumer"):::consumer
-        end
-
+    end
+    
+    subgraph "Async & Event Processing"
+        direction TB
+        kafka_bus[("Apache Kafka <br> Event Bus")]:::bus
+        note_consumer("Notification Consumer"):::consumer
+        search_consumer("Search Index Consumer"):::consumer
+        celery_consumer("Background Task Consumer"):::consumer
     end
 
     %% --- Define Connections ---
@@ -71,19 +64,20 @@ graph LR
     gateway --> prop_service
     gateway --> search_service
     gateway --> booking_service
+    gateway --> payment_service
 
     prop_service --> prop_db
-    search_service --> es_cluster
     booking_service --> booking_db
     booking_service --> redis_cache
-
+    search_service --> es_cluster
+    
     prop_service -- Publishes Events --> kafka_bus
     booking_service -- Publishes Events --> kafka_bus
-    
-    kafka_bus --> note_consumer
-    kafka_bus --> search_consumer
-    kafka_bus --> celery_consumer
-```
+    payment_service -- Publishes Events --> kafka_bus
+
+    kafka_bus -- Events --> note_consumer
+    kafka_bus -- Property Events --> search_consumer
+    kafka_bus -- Booking Events --> celery_consumer```
 
 ---
 
