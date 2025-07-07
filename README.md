@@ -13,76 +13,76 @@
 ---
 ```mermaid
 graph LR
+    %% --- Define Styles ---
+    classDef client fill:#d4edda,stroke:#155724,stroke-width:2px;
+    classDef service fill:#fff3cd,stroke:#856404,stroke-width:2px;
+    classDef gateway fill:#d4d4d4,stroke:#333,stroke-width:2px;
+    classDef database fill:#d1ecf1,stroke:#0c5460,stroke-width:2px;
+    classDef cache fill:#f8d7da,stroke:#721c24,stroke-width:2px;
+    classDef bus fill:#fdfdfe,stroke:#383d41,stroke-width:2px;
+    classDef consumer fill:#ffeccc,stroke:#806602,stroke-width:2px;
+    classDef external fill:#e2e3e5,stroke:#383d41,stroke-width:2px;
+
+    %% --- Define Components ---
     subgraph Clients
         direction TB
-        landlord["UI / App for Landlords <br> (Property & Rental Management)"]
-        tenant["UI / App for Tenants <br> (Search, Booking, Chat, Payments)"]
+        landlord["Landlord App <br> (React)"]:::client
+        tenant["Customer App <br> (Search, Booking, Chat)"]:::client
     end
 
-    subgraph "Backend Services"
-        direction TB
+    subgraph "Backend System"
+        gateway("API Gateway"):::gateway
         
-        subgraph "Synchronous Operations (Direct API Calls)"
-            direction TB
-            gateway("API Gateway <br> Auth, Routing, Rate Limiting")
-
-            subgraph "Property & Rent Flow"
-                prop_service("Property Service") --> prop_db[("PostgreSQL Cluster <br> Properties, Visits")]
-            end
-            
-            subgraph "Search Flow"
-                search_service("Search Service") --> es_cluster(("Elasticsearch Cluster"))
-            end
-
-            subgraph "Booking Flow"
-                booking_service("Booking Service") --> redis_cache{{"Redis Cache <br> Availability"}}
-                redis_cache --> booking_db[("PostgreSQL Cluster <br> Bookings")]
-            end
-            
-            subgraph "Real-time Flow"
-                chat_service("Chat Service <br> WebSockets")
-            end
-
-            subgraph "Payment Flow"
-                payment_service("Payment Service") --> stripe[/Stripe API/]
-            end
+        subgraph "Core Services"
+            prop_service("Property Service"):::service
+            search_service("Search Service"):::service
+            booking_service("Booking Service"):::service
+            payment_service("Payment Service"):::service
         end
 
-    end
-    
-    subgraph "Asynchronous Event-Driven Processing"
-        direction TB
-        kafka_bus(["Apache Kafka <br> Event Bus"])
+        subgraph "Databases & Caches"
+            prop_db[("PostgreSQL <br> Properties")]:::database
+            booking_db[("PostgreSQL <br> Bookings")]:::database
+            es_cluster(("Elasticsearch")):::database
+            redis_cache{{"Redis <br> Cache"}}:::cache
+        end
 
+        subgraph "External Integrations"
+           stripe[/Stripe API/]:::external
+        end
+    end
+
+    subgraph "Async Processing"
+        kafka_bus(["Apache Kafka <br> Event Bus"]):::bus
         subgraph "Event Consumers"
-            direction TB
-            search_consumer("Search Consumer") --> es_cluster
-            notification_service("Notification Service") --> user_comm["Sends Email / Push Notifications"]
-            celery_workers("Celery Workers <br> Background Tasks") --> redis_broker{{"Redis Broker"}}
-            celery_workers --> booking_db
+             note_consumer("Notification Consumer"):::consumer
+             search_consumer("Search Index Consumer"):::consumer
+             celery_consumer("Background Task Consumer"):::consumer
         end
     end
 
-    %% Client to Gateway
+    %% --- Define Connections ---
     landlord --> gateway
     tenant --> gateway
 
-    %% Gateway to Services
-    gateway -- "/properties" --> prop_service
-    gateway -- "/search" --> search_service
-    gateway -- "/book" --> booking_service
-    gateway -- "/chat" --> chat_service
-    gateway -- "/pay" --> payment_service
+    gateway --> prop_service
+    gateway --> search_service
+    gateway --> booking_service
+    gateway --> payment_service
 
-    %% Services Publishing Events
-    prop_service -- "Publishes Events (e.g., property_created)" --> kafka_bus
-    booking_service -- "Publishes Events (e.g., booking_confirmed)" --> kafka_bus
-    payment_service -- "Publishes Events (e.g., payment_successful)" --> kafka_bus
+    prop_service --> prop_db
+    booking_service --> booking_db
+    booking_service --> redis_cache
+    search_service --> es_cluster
+    payment_service --> stripe
 
-    %% Kafka Consuming Events
-    kafka_bus -- "Consumes property_events" --> search_consumer
-    kafka_bus -- "Consumes all_events" --> notification_service
-    kafka_bus -- "Consumes payment_events" --> celery_workers
+    prop_service -- Publishes Events --> kafka_bus
+    booking_service -- Publishes Events --> kafka_bus
+    payment_service -- Publishes Events --> kafka_bus
+
+    kafka_bus -- Events --> note_consumer
+    kafka_bus -- Property Events --> search_consumer
+    kafka_bus -- Booking Events --> celery_consumer
 ```
 
 ---
