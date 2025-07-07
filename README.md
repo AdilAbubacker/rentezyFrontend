@@ -11,6 +11,70 @@
 **RentEzy** is a comprehensive, cloud-native property management platform engineered from the ground up using a distributed, event-driven microservices architecture. It's designed not just as a web application, but as a resilient, scalable, and maintainable system capable of handling complex, real-world property rental workflows.
 
 ---
+```mermaid
+graph TD
+    subgraph "Client (Browser)"
+        A[React Frontend]
+    end
+
+    subgraph "API Gateway (Django)"
+        B[Authentication & Routing]
+    end
+
+    subgraph "Core Services"
+        C[Auth Service]
+        D[Property Service]
+        E[Booking Service]
+        F[Rent Service]
+    end
+
+    subgraph "Real-time Services"
+        G[Chat Service]
+        H[Notification Service]
+    end
+
+    subgraph "Asynchronous Workers & Search"
+        I[Search Consumer]
+        J[Celery Workers]
+    end
+
+    subgraph "Data & Messaging Tier"
+        K[(PostgreSQL)]
+        L[(Elasticsearch)]
+        M[(Redis)]
+        N((Apache Kafka))
+    end
+
+    A --> B
+    B --> C
+    B --> D
+    B --> E
+    B --> F
+    B <--> G
+
+    C -- Publishes event --> N
+    D -- Publishes event --> N
+    E -- Publishes event --> N
+    F -- Publishes event --> N
+
+    N -- Consumes event --> H
+    N -- Consumes event --> I
+
+    D -- Writes to --> K
+    E -- Writes to --> K
+    F -- Writes to --> K
+    
+    I -- Writes to --> L
+    
+    B -- Queries --> L
+
+    E -- Uses --> M
+    F -- Uses --> M
+    J -- Uses --> M
+```
+
+---
+
 
 ## ► Core Architectural Philosophy
 
