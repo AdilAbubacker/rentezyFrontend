@@ -82,7 +82,8 @@ graph LR
     
     kafka_bus --> note_consumer
     kafka_bus --> search_consumer
-    kafka_bus --> celery_consumer```
+    kafka_bus --> celery_consumer
+```
 
 ---
 
