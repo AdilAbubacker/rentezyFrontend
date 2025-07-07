@@ -77,7 +77,8 @@ graph LR
 
     kafka_bus -- Events --> note_consumer
     kafka_bus -- Property Events --> search_consumer
-    kafka_bus -- Booking Events --> celery_consumer```
+    kafka_bus -- Booking Events --> celery_consumer
+```
 
 ---
 
