@@ -13,48 +13,59 @@
 ---
 ```mermaid
 graph LR
-    %% --- Define Styles ---
+    %% --- Define Styles for Colors ---
     classDef client fill:#d4edda,stroke:#155724,stroke-width:2px;
     classDef service fill:#fff3cd,stroke:#856404,stroke-width:2px;
     classDef gateway fill:#d4d4d4,stroke:#333,stroke-width:2px;
     classDef database fill:#d1ecf1,stroke:#0c5460,stroke-width:2px;
     classDef cache fill:#f8d7da,stroke:#721c24,stroke-width:2px;
-    classDef bus fill:#fdfdfe,stroke:#383d41,stroke-width:2px,height:100px;
+    classDef bus fill:#fdfdfe,stroke:#383d41,stroke-width:2px,rx:20px,ry:20px;
     classDef consumer fill:#ffeccc,stroke:#806602,stroke-width:2px;
     classDef external fill:#e2e3e5,stroke:#383d41,stroke-width:2px;
 
-    %% --- Main Architecture Flow ---
+    %% --- Actors ---
     subgraph Clients
+        direction TB
         landlord["Landlord App <br> (React)"]:::client
         tenant["Customer App <br> (Search, Booking, Chat)"]:::client
     end
 
-    gateway("API Gateway"):::gateway
-
-    subgraph "Core Services & Databases"
+    %% --- Main Backend System Block ---
+    subgraph RentEzy Backend System
         direction LR
-        subgraph Services
+        
+        %% --- Entry Point ---
+        gateway("API Gateway"):::gateway
+
+        subgraph "Core Services"
             direction TB
             prop_service("Property Service"):::service
-            search_service("Search Service"):::service
+            rent_service("Rent Service"):::service
             booking_service("Booking Service"):::service
-            payment_service("Payment Service"):::service
+            schedule_service("Schedule Visit Service"):::service
+            search_service("Search Service"):::service
+            chat_service("Chat Service <br> (WebSockets)"):::service
         end
-        subgraph Databases & Caches
-             direction TB
-             prop_db[("PostgreSQL <br> Properties")]:::database
-             booking_db[("PostgreSQL <br> Bookings")]:::database
-             es_cluster(("Elasticsearch")):::database
-             redis_cache{{"Redis Cache"}}:::cache
+        
+        subgraph "Databases & Caches"
+            direction TB
+            prop_db[("PostgreSQL <br> Properties")]:::database
+            booking_db[("PostgreSQL <br> Bookings")]:::database
+            es_cluster(("Elasticsearch")):::database
+            redis_cache{{"Redis Cache"}}:::cache
         end
-    end
-    
-    subgraph "Async & Event Processing"
-        direction TB
-        kafka_bus[("Apache Kafka <br> Event Bus")]:::bus
-        note_consumer("Notification Consumer"):::consumer
-        search_consumer("Search Index Consumer"):::consumer
-        celery_consumer("Background Task Consumer"):::consumer
+
+        subgraph "Event-Driven Components"
+            direction TB
+            kafka_bus[("Apache Kafka <br> Event Bus")]:::bus
+            
+            subgraph "Event Consumers"
+                direction TB
+                notification_service("Notification Service"):::consumer
+                search_consumer("Search Index Consumer"):::consumer
+                celery_workers("Celery Workers <br> Background Tasks"):::consumer
+            end
+        end
     end
 
     %% --- Define Connections ---
@@ -62,22 +73,26 @@ graph LR
     tenant --> gateway
 
     gateway --> prop_service
-    gateway --> search_service
+    gateway --> rent_service
     gateway --> booking_service
-    gateway --> payment_service
+    gateway --> schedule_service
+    gateway --> search_service
+    gateway --> chat_service
 
     prop_service --> prop_db
     booking_service --> booking_db
+    schedule_service --> booking_db
+    rent_service --> booking_db
     booking_service --> redis_cache
     search_service --> es_cluster
     
     prop_service -- Publishes Events --> kafka_bus
     booking_service -- Publishes Events --> kafka_bus
-    payment_service -- Publishes Events --> kafka_bus
+    rent_service -- Publishes Events --> kafka_bus
 
-    kafka_bus -- Events --> note_consumer
+    kafka_bus -- Events --> notification_service
     kafka_bus -- Property Events --> search_consumer
-    kafka_bus -- Booking Events --> celery_consumer
+    kafka_bus -- Scheduled Events --> celery_workers
 ```
 
 ---
