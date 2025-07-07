@@ -12,65 +12,77 @@
 
 ---
 ```mermaid
-graph TD
-    subgraph "Client (Browser)"
-        A[React Frontend]
+graph LR
+    subgraph Clients
+        direction TB
+        landlord["UI / App for Landlords <br> (Property & Rental Management)"]
+        tenant["UI / App for Tenants <br> (Search, Booking, Chat, Payments)"]
     end
 
-    subgraph "API Gateway (Django)"
-        B[Authentication & Routing]
+    subgraph "Backend Services"
+        direction TB
+        
+        subgraph "Synchronous Operations (Direct API Calls)"
+            direction TB
+            gateway("API Gateway <br> Auth, Routing, Rate Limiting")
+
+            subgraph "Property & Rent Flow"
+                prop_service("Property Service") --> prop_db[("PostgreSQL Cluster <br> Properties, Visits")]
+            end
+            
+            subgraph "Search Flow"
+                search_service("Search Service") --> es_cluster(("Elasticsearch Cluster"))
+            end
+
+            subgraph "Booking Flow"
+                booking_service("Booking Service") --> redis_cache{{"Redis Cache <br> Availability"}}
+                redis_cache --> booking_db[("PostgreSQL Cluster <br> Bookings")]
+            end
+            
+            subgraph "Real-time Flow"
+                chat_service("Chat Service <br> WebSockets")
+            end
+
+            subgraph "Payment Flow"
+                payment_service("Payment Service") --> stripe[/Stripe API/]
+            end
+        end
+
     end
-
-    subgraph "Core Services"
-        C[Auth Service]
-        D[Property Service]
-        E[Booking Service]
-        F[Rent Service]
-    end
-
-    subgraph "Real-time Services"
-        G[Chat Service]
-        H[Notification Service]
-    end
-
-    subgraph "Asynchronous Workers & Search"
-        I[Search Consumer]
-        J[Celery Workers]
-    end
-
-    subgraph "Data & Messaging Tier"
-        K[(PostgreSQL)]
-        L[(Elasticsearch)]
-        M[(Redis)]
-        N((Apache Kafka))
-    end
-
-    A --> B
-    B --> C
-    B --> D
-    B --> E
-    B --> F
-    B <--> G
-
-    C -- Publishes event --> N
-    D -- Publishes event --> N
-    E -- Publishes event --> N
-    F -- Publishes event --> N
-
-    N -- Consumes event --> H
-    N -- Consumes event --> I
-
-    D -- Writes to --> K
-    E -- Writes to --> K
-    F -- Writes to --> K
     
-    I -- Writes to --> L
-    
-    B -- Queries --> L
+    subgraph "Asynchronous Event-Driven Processing"
+        direction TB
+        kafka_bus(["Apache Kafka <br> Event Bus"])
 
-    E -- Uses --> M
-    F -- Uses --> M
-    J -- Uses --> M
+        subgraph "Event Consumers"
+            direction TB
+            search_consumer("Search Consumer") --> es_cluster
+            notification_service("Notification Service") --> user_comm["Sends Email / Push Notifications"]
+            celery_workers("Celery Workers <br> Background Tasks") --> redis_broker{{"Redis Broker"}}
+            celery_workers --> booking_db
+        end
+    end
+
+    %% Client to Gateway
+    landlord --> gateway
+    tenant --> gateway
+
+    %% Gateway to Services
+    gateway -- "/properties" --> prop_service
+    gateway -- "/search" --> search_service
+    gateway -- "/book" --> booking_service
+    gateway -- "/chat" --> chat_service
+    gateway -- "/pay" --> payment_service
+
+    %% Services Publishing Events
+    prop_service -- "Publishes Events (e.g., property_created)" --> kafka_bus
+    booking_service -- "Publishes Events (e.g., booking_confirmed)" --> kafka_bus
+    payment_service -- "Publishes Events (e.g., payment_successful)" --> kafka_bus
+
+    %% Kafka Consuming Events
+    kafka_bus -- "Consumes property_events" --> search_consumer
+    kafka_bus -- "Consumes all_events" --> notification_service
+    kafka_bus -- "Consumes payment_events" --> celery_workers
 ```
 
 ---
