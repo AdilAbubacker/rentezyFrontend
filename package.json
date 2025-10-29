@@ -2,6 +2,9 @@
   "name": "adils-application-2",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "@date-io/date-fns": "^2.17.0",
     "@date-io/dayjs": "^2.17.0",
