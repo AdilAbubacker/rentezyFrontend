@@ -27,6 +27,8 @@ const CreateAccountModal = (props) => {
 
       }else{
         console.log(`Error: ${error.message}`)
+        toast.error('Network Error')
+
       }
     }
   }

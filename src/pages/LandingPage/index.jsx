@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import axiosInstance from "api/axios";
 
 import { useNavigate } from "react-router-dom";
 
@@ -24,7 +26,21 @@ const LandingPagePage = () => {
   const [sliderState, setsliderState] = React.useState(0);
 
   const submitSearch = async () => {
-    navigate(`/properties?search=${searchQuery}`);
+    if (!searchQuery || (typeof searchQuery === "string" && searchQuery.trim().length === 0)) {
+      toast.error("Please enter a search name.");
+      return;
+    }
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      toast.error("You're offline. Please check your connection.");
+      return;
+    }
+    try {
+      const response = await axiosInstance.get(`/api/search/${encodeURIComponent(searchQuery)}`)
+      navigate(`/properties?search=${searchQuery}`, { state: { preloaded: response.data } });
+    } catch (err) {
+      const message = err?.response?.data?.message || err?.message || 'Network error. Please try again.'
+      toast.error(message)
+    }
   }
 
   return (
@@ -187,7 +203,7 @@ const LandingPagePage = () => {
             </div>
           </div>
         </div>
-        <div className="bg-gray-50 flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] py-[50px] w-full">
+        {/* <div className="bg-gray-50 flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] py-[50px] w-full">
           <div className="flex md:flex-col flex-row md:gap-10 gap-[100px] items-start justify-start max-w-[1200px] mx-auto w-full">
             <List
               className="md:flex-1 sm:flex-col flex-row md:gap-10 gap-[100px] grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 w-[73%] md:w-full"
@@ -449,8 +465,8 @@ const LandingPagePage = () => {
               </div>
             </div>
           </div>
-        </div> */}
-        {/* <div className="flex flex-col font-manrope gap-6 items-start justify-start w-full">
+        </div>
+        <div className="flex flex-col font-manrope gap-6 items-start justify-start w-full">
           <div className="flex flex-col items-center justify-center md:px-10 sm:px-5 px-[215px] w-full">
             <Slider
               autoPlay
@@ -691,7 +707,7 @@ const LandingPagePage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </>

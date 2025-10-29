@@ -21,6 +21,11 @@ function MainHeader(props) {
   const [unreadCount, setUnreadCount] = useState(0)
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
+  const handleClick = (e) => {
+    e.preventDefault(); // 🚫 stop <Link> from navigating
+    toast.error("Network Rrror");
+  };
+
   const toggleDropdown = async () => {
     setDropdownOpen(!isDropdownOpen);
     setUnreadCount(0)
@@ -135,42 +140,27 @@ function MainHeader(props) {
               orientation="horizontal"
             >
               <div className="flex flex-row gap-1.5 items-start justify-start w-[77px]">
-                <Text
-                  className="text-base text-white-A700 w-auto"
-                  size="txtManropeSemiBold16"
-                >
-                  Landlords
-                </Text>
+                <Link to="/"  onClick={handleClick} className="text-base text-white-A700 w-auto">
+                  <Text size="txtManropeSemiBold16">Landlords</Text>
+                </Link>
               </div>
               <div className="flex flex-row gap-1.5 items-start justify-start w-[77px]">
-                <Text
-                  className="text-base text-white-A700 w-auto"
-                  size="txtManropeSemiBold16"
-                >
-                  Tenants
-                </Text>
+                <Link to="/"  onClick={handleClick} className="text-base text-white-A700 w-auto">
+                  <Text size="txtManropeSemiBold16">Tenants</Text>
+                </Link>
               </div>
               <div className="flex flex-row gap-1.5 items-start justify-start w-[77px]">
-                <Text
-                  className="text-base text-white-A700 w-auto"
-                  size="txtManropeSemiBold16"
-                >
-                  About Us
-                </Text>
+                <Link to="/"  onClick={handleClick} className="text-base text-white-A700 w-auto">
+                  <Text size="txtManropeSemiBold16">About Us</Text>
+                </Link>
               </div>
             </List>
-            <Text
-              className="text-base text-center text-white-A700 w-auto"
-              size="txtManropeSemiBold16"
-            >
-              Property{" "}
-            </Text>
-            <Text onClick={notify}
-              className="text-base text-white-A700 w-auto"
-              size="txtManropeSemiBold16"
-            >
-              Blog
-            </Text>
+            <Link to="/"  onClick={handleClick} className="text-base text-center text-white-A700 w-auto">
+              <Text size="txtManropeSemiBold16">Property</Text>
+            </Link>
+            <Link to="/"  onClick={handleClick} className="text-base text-white-A700 w-auto">
+              <Text size="txtManropeSemiBold16">Blog</Text>
+            </Link>
             <ToastContainer position="bottom-right"
               autoClose={1500}
               hideProgressBar={false}
@@ -196,7 +186,7 @@ function MainHeader(props) {
                 />
               }
             >
-              <Link to={'/scheduled-visits'} className="font-light font-manrope text-white-A700 text-left text-sm">
+              <Link to={'/scheduled-visits'} onClick={handleClick} className="font-light font-manrope text-white-A700 text-left text-sm">
                 Scheduled Visits
               </Link>
             </Button>

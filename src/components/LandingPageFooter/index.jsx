@@ -6,7 +6,7 @@ const LandingPageFooter = (props) => {
   return (
     <>
       <footer className={props.className}>
-        <div className="flex flex-col md:gap-10 gap-[120px] items-start justify-start w-full">
+        {/* <div className="flex flex-col md:gap-10 gap-[120px] items-start justify-start w-full"> */}
           <div className="flex md:flex-col flex-row md:gap-5 items-center justify-start w-full">
             <div className="flex flex-col gap-[43px] items-start justify-start w-[341px]">
               <div className="flex flex-row gap-[11px] h-10 md:h-auto items-center justify-start w-[341px]">
@@ -23,30 +23,14 @@ const LandingPageFooter = (props) => {
                 </Text>
               </div>
               <div className="flex flex-col gap-7 h-[194px] md:h-auto items-start justify-start w-full">
-                <Text
-                  className="leading-[160.00%] text-base text-gray-900"
-                  size="txtManropeSemiBold16"
-                >
-                  <>
-                    59 Bervely Hill Ave, Brooklyn Town,
-                    <br />
-                    New York, NY 5630, CA, US
-                  </>
-                </Text>
-                <div className="flex flex-col gap-1 items-start justify-start w-auto">
+                
+                  
                   <Text
                     className="text-base text-gray-900 w-auto"
                     size="txtManropeSemiBold16"
                   >
-                    +(123) 456-7890
+                    rentezy@gmail.com
                   </Text>
-                  <Text
-                    className="text-base text-gray-900 w-auto"
-                    size="txtManropeSemiBold16"
-                  >
-                    info@mail.com
-                  </Text>
-                </div>
                 <div className="flex flex-row gap-3 items-start justify-start w-full">
                   <div className="flex flex-col h-[30px] items-center justify-start w-[30px]">
                     <Img
@@ -91,18 +75,7 @@ const LandingPageFooter = (props) => {
                   Features
                 </Text>
                 <div className="flex flex-col gap-3.5 items-start justify-start w-full">
-                  <Text
-                    className="text-base text-gray-900 w-full"
-                    size="txtManropeSemiBold16"
-                  >
-                    Home v1
-                  </Text>
-                  <Text
-                    className="text-base text-gray-900 w-full"
-                    size="txtManropeSemiBold16"
-                  >
-                    Home v2
-                  </Text>
+                  
                   <Text
                     className="text-base text-gray-900 w-full"
                     size="txtManropeSemiBold16"
@@ -131,18 +104,8 @@ const LandingPageFooter = (props) => {
                   Information
                 </Text>
                 <div className="flex flex-col gap-3.5 items-start justify-start w-full">
-                  <Text
-                    className="text-base text-gray-900 w-full"
-                    size="txtManropeSemiBold16"
-                  >
-                    Listing v1
-                  </Text>
-                  <Text
-                    className="text-base text-gray-900 w-full"
-                    size="txtManropeSemiBold16"
-                  >
-                    Listing v2
-                  </Text>
+                  
+              
                   <Text
                     className="text-base text-gray-900 w-full"
                     size="txtManropeSemiBold16"
@@ -182,18 +145,7 @@ const LandingPageFooter = (props) => {
                     size="txtManropeSemiBold16"
                   >
                     FAQ
-                  </Text>
-                  <Text
-                    className="text-base text-gray-900 w-full"
-                    size="txtManropeSemiBold16"
-                  >
-                    <>Privacy Policy</>
-                  </Text>
-                  <Text
-                    className="text-base text-gray-900 w-full"
-                    size="txtManropeSemiBold16"
-                  >
-                    License
+                  
                   </Text>
                 </div>
               </div>
@@ -209,13 +161,13 @@ const LandingPageFooter = (props) => {
                     className="text-base text-gray-900 w-full"
                     size="txtManropeSemiBold16"
                   >
-                    Log in
+                      Privacy Policy
                   </Text>
                   <Text
                     className="text-base text-gray-900 w-full"
                     size="txtManropeSemiBold16"
                   >
-                    Enter OTP
+                    Licence
                   </Text>
                   <Text
                     className="text-base text-gray-900 w-full"
@@ -223,29 +175,20 @@ const LandingPageFooter = (props) => {
                   >
                     New Password
                   </Text>
-                  <Text
-                    className="text-base text-gray-900 w-full"
-                    size="txtManropeSemiBold16"
-                  >
-                    Reset Password
-                  </Text>
-                  <Text
-                    className="text-base text-gray-900 w-full"
-                    size="txtManropeSemiBold16"
-                  >
-                    Create Account
-                  </Text>
+                  
                 </div>
               </div>
             </div>
           </div>
-          <Text
-            className="text-base text-gray-900 w-full"
-            size="txtManropeSemiBold16"
-          >
-            © 2022. All rights reserved.
+          
+        {/* </div> */}
+        {/* <div
+          className="fixed bottom-0 left-0 w-full flex items-center justify-center py-4 bg-white z-50"
+        >
+          <Text className="text-gray-900 text-base" size="txtManropeSemiBold16">
+            Built with ❤️ by Adil Abubacker
           </Text>
-        </div>
+        </div> */}
       </footer>
     </>
   );

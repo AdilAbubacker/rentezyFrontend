@@ -6,6 +6,7 @@ import LandingPageFooter from "components/LandingPageFooter";
 import LandingPageHeader from "components/LandingPageHeader";
 import axiosInstance from "api/axios";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const dropdownlargeOptionsList = [
   { label: "Option1", value: "option1" },
@@ -25,22 +26,35 @@ const dropdownlargeOneOptionsList = [
 
 const ListingPage = () => {
     const [properties, setProperties] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const searchData = searchParams.get('search');
 
     useEffect(() => {
       const fethProperties = async () => {
+        setLoading(true)
+        setError(null)
         try {
-          const response = await axiosInstance.get(`/api/search/${searchData}`);
-          console.log(response.data)
+          if (!searchData || String(searchData).trim().length === 0) {
+            setProperties([])
+            toast.error("Missing search term.")
+            return
+          }
+          const response = await axiosInstance.get(`/api/search/${searchData}`)
           setProperties(response.data)
-        } catch (error) {
-          console.log('error retrieving properties', error)
+        } catch (err) {
+          const message = err?.response?.data?.message || err?.message || 'Failed to load properties'
+          setError(message)
+          setProperties([])
+          toast.error(message)
+        } finally {
+          setLoading(false)
         }
       }
       fethProperties();
-    }, [])
+    }, [searchData])
 
   //   useEffect(() => {
   //     const fetchProperties = async () => {
@@ -353,16 +367,27 @@ const ListingPage = () => {
               
               <div className="flex flex-1 flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
                 <div className="flex flex-col items-start justify-start w-full">
-                  <div className="md:gap-5 gap-6 grid md:grid-cols-1 grid-cols-3 justify-center min-h-[auto] w-full">
-                    {properties.map((props, index) => (
-                      <React.Fragment key={`properties${index}`}>
-                        <LandingPageCard
-                          className="flex flex-1 flex-col h-[512px] md:h-auto items-start justify-start w-full"
-                          {...props}
-                        />
-                      </React.Fragment>
-                    ))}
-                  </div>
+                  {loading && (
+                    <Text className="text-gray-700" size="txtManropeSemiBold16">Loading properties…</Text>
+                  )}
+                  {!loading && error && (
+                    <Text className="text-red-500" size="txtManropeSemiBold16">{error}</Text>
+                  )}
+                  {!loading && !error && properties?.length === 0 && (
+                    <Text className="text-gray-700" size="txtManropeSemiBold16">No properties found.</Text>
+                  )}
+                  {!loading && !error && properties?.length > 0 && (
+                    <div className="md:gap-5 gap-6 grid md:grid-cols-1 grid-cols-3 justify-center min-h-[auto] w-full">
+                      {properties.map((props, index) => (
+                        <React.Fragment key={`properties${index}`}>
+                          <LandingPageCard
+                            className="flex flex-1 flex-col h-[512px] md:h-auto items-start justify-start w-full"
+                            {...props}
+                          />
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="flex sm:flex-col flex-row gap-5 items-center justify-between w-full">
                   <div className="flex flex-row gap-[5px] items-start justify-start w-auto">

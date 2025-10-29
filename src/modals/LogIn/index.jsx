@@ -23,11 +23,13 @@ const LogInModal = (props) => {
       toast.success('login succefull')
     } catch (error) {
       if (error.response) {
-
+        toast.error('Network Error')
         console.log(error.response.data);
         console.log(error.response.status);
         console.log(error.response.headers);
       }else{
+        toast.error('Network Error')
+
         console.log(`Error: ${error.message}`)
     }
     }
